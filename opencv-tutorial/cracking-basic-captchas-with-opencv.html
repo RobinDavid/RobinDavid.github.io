@@ -1,0 +1,1060 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Cracking basic captchas with OpenCV - Robin David</title>
+  <meta name="author" content="Robin David">
+
+  
+  <meta name="description" content="Introduction While playing with OpenCV, an idea quickly came to my mind. Can OpenCV help to bypass captcha engines ? The answer is mitigated.
+Old &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.robindavid.fr/opencv-tutorial/cracking-basic-captchas-with-opencv.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Robin David" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-48325647-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.robindavid.fr" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Cracking Basic Captchas With OpenCV</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Introduction</h2>
+
+<p>While playing with OpenCV, an idea quickly came to my mind. Can OpenCV help to bypass captcha engines ? The answer is mitigated.
+Old captcha engine can be bypassed easily but it is not an exact science and if you except in this article to know how to bypass
+the Google re-Captcha engine I  prefer tell you I didn&rsquo;t even tried ! Re-captcha is from my point of view the best. Anyway
+let&rsquo;s see what we can do with some basic engines. As OCR engine I have used the open source tesseract and my pytesser module
+(<a href="" title="https://github.com/RobinDavid/Pytesser">my pytesser implementation</a>.
+The project is hosted on <a href="" title="https://github.com/RobinDavid/Captacha-basic-recognition">Github</a>.</p>
+
+<h2>Basic functions</h2>
+
+<p>In order to process real captchas I have written some functions that use OpenCV. This functions are basically the same than the OpenCV smooth, dilate, erode and so on but to which you can specify the number of rounds. So it is for example easy to apply 10 or more smooth in a row. An interesting function is getIndividualContoursRectangle which return a list of rectangle coordinate of the detected contours.
+Note: I have also written a small example in the main the show how to use this functions.</p>
+
+<h3>The code:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#-*- coding:utf-8 -*-</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">cv2.cv</span> <span class="kn">as</span> <span class="nn">cv</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">pytesser</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">smoothImage</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">nbiter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">cv</span><span class="o">.</span><span class="n">CV_GAUSSIAN</span><span class="p">):</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbiter</span><span class="p">):</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">Smooth</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="nb">filter</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">openCloseImage</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">nbiter</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbiter</span><span class="p">):</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">MorphologyEx</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_MOP_OPEN</span><span class="p">)</span> <span class="c">#Open and close to make appear contours</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">MorphologyEx</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_MOP_CLOSE</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">dilateImage</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">nbiter</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbiter</span><span class="p">):</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">Dilate</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">im</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">erodeImage</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">nbiter</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbiter</span><span class="p">):</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">Erode</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">im</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">thresholdImage</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">cv</span><span class="o">.</span><span class="n">CV_THRESH_BINARY_INV</span><span class="p">):</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">Threshold</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="nb">filter</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">resizeImage</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)):</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="c">#It appears to me that resize an image can be significant for the ocr engine to detect characters</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">res</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateImage</span><span class="p">((</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="p">),</span> <span class="n">im</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="n">im</span><span class="o">.</span><span class="n">channels</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="k">return</span> <span class="n">res</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">getContours</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">approx_value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span> <span class="c">#Return contours approximated</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">storage</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateMemStorage</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">contours</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">FindContours</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">CloneImage</span><span class="p">(</span><span class="n">im</span><span class="p">),</span> <span class="n">storage</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_RETR_CCOMP</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_CHAIN_APPROX_SIMPLE</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">contourLow</span><span class="o">=</span><span class="n">cv</span><span class="o">.</span><span class="n">ApproxPoly</span><span class="p">(</span><span class="n">contours</span><span class="p">,</span> <span class="n">storage</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_POLY_APPROX_DP</span><span class="p">,</span><span class="n">approx_value</span><span class="p">,</span><span class="n">approx_value</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="k">return</span> <span class="n">contourLow</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">getIndividualContoursRectangles</span><span class="p">(</span><span class="n">contours</span><span class="p">):</span> <span class="c">#Return the bounding rect for every contours</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">contourscopy</span> <span class="o">=</span> <span class="n">contours</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">rectangleList</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="k">while</span> <span class="n">contourscopy</span><span class="p">:</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">BoundingRect</span><span class="p">(</span><span class="n">contourscopy</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="n">rectangleList</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">))</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="err"> </span> <span class="n">contourscopy</span> <span class="o">=</span> <span class="n">contourscopy</span><span class="o">.</span><span class="n">h_next</span><span class="p">()</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="k">return</span> <span class="n">rectangleList</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">orig</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">LoadImage</span><span class="p">(</span><span class="s">&quot;robin2.png&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="c">#Convert in black and white</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">res</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateImage</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">GetSize</span><span class="p">(</span><span class="n">orig</span><span class="p">),</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">CvtColor</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_BGR2GRAY</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="c">#Operations on the image</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">openCloseImage</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">dilateImage</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">erodeImage</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">smoothImage</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err">  </span><span class="n">thresholdImage</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_THRESH_BINARY_INV</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err">  </span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="c">#Get contours approximated</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">contourLow</span> <span class="o">=</span> <span class="n">getContours</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err">  </span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="c">#Draw them on an empty image</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">final</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateImage</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">GetSize</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">Zero</span><span class="p">(</span><span class="n">final</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">DrawContours</span><span class="p">(</span><span class="n">final</span><span class="p">,</span> <span class="n">contourLow</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">Scalar</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span> <span class="n">cv</span><span class="o">.</span><span class="n">Scalar</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_FILLED</span><span class="p">)</span> <span class="err"> </span> <span class="err"> </span>
+</span><span class='line'><span class="err"> </span> <span class="err">  </span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">ShowImage</span><span class="p">(</span><span class="s">&quot;orig&quot;</span><span class="p">,</span> <span class="n">orig</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">ShowImage</span><span class="p">(</span><span class="s">&quot;image&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">SaveImage</span><span class="p">(</span><span class="s">&quot;modified.png&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">ShowImage</span><span class="p">(</span><span class="s">&quot;contour&quot;</span><span class="p">,</span> <span class="n">final</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">SaveImage</span><span class="p">(</span><span class="s">&quot;contour.png&quot;</span><span class="p">,</span> <span class="n">final</span><span class="p">)</span>
+</span><span class='line'><span class="err"> </span> <span class="err">  </span>
+</span><span class='line'><span class="err"> </span> <span class="err"> </span> <span class="n">cv</span><span class="o">.</span><span class="n">WaitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Examples:</h3>
+
+<p><strong>Original image:</strong></p>
+
+<p><img src="/images/opencv-tutorial/captcha/Captcha.png" title="'Captcha image'" ></p>
+
+<p><strong>After processing:</strong></p>
+
+<p><img src="/images/opencv-tutorial/captcha/modified.png" title="'After processing'" ></p>
+
+<p><strong>After contour approximation:</strong></p>
+
+<p><img src="/images/opencv-tutorial/captcha/contour.png" title="'After contour approximation'" ></p>
+
+<h2>Captcha downloader</h2>
+
+<p>To do tests at a larger scale I needed to be able to download multiple captcha images because doing it by hand is too boring. That&rsquo;s why I have written a class that allow to download captcha images by an automated manner. Basically the class the class takes two arguments the url of the page were the captcha is located and the pattern in the image url that will be searched in any img tags. This module also provide a function called &ldquo;setup_Benchtest&rdquo; that create the envirronement automatically, create a folder and download twenty images of the given url the the newly created directory. If the directory exists all the images in it are deleted and new are downloaded. You will see a practical usage of the class for Ebay captchas.</p>
+
+<h3>The code:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">urllib</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">re</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">HTMLParser</span> <span class="kn">import</span> <span class="n">HTMLParser</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">cv2.cv</span> <span class="kn">as</span> <span class="nn">cv</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Captcha_Downloader</span><span class="p">():</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">class</span> <span class="nc">MyHTMLParser</span><span class="p">(</span><span class="n">HTMLParser</span><span class="p">):</span>
+</span><span class='line'>    <span class="c">#This parser will try to find the given pattern an return the captcha url</span>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pattern</span><span class="p">):</span>
+</span><span class='line'>            <span class="n">HTMLParser</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span class='line'>            <span class="bp">self</span><span class="o">.</span><span class="n">image_url</span> <span class="o">=</span> <span class="bp">None</span>
+</span><span class='line'>            <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span><span class="n">pattern</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">handle_starttag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s">&quot;img&quot;</span><span class="p">:</span>
+</span><span class='line'>                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+</span><span class='line'>                    <span class="k">if</span> <span class="n">attr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;src&quot;</span><span class="p">:</span>
+</span><span class='line'>                        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span> <span class="n">attr</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+</span><span class='line'>                            <span class="bp">self</span><span class="o">.</span><span class="n">image_url</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">getLink</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_url</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MyHTMLParser</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">image_url</span> <span class="o">=</span> <span class="bp">None</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">imagestr</span> <span class="o">=</span> <span class="bp">None</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">=</span> <span class="bp">None</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span> <span class="c">#Open registration form</span>
+</span><span class='line'>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">txt</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="c">#get page</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">txt</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span> <span class="c">#Parse HTML to get image url</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">image_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">getLink</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_url</span><span class="p">)</span> <span class="c">#Open image url</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">imagestr</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="c">#Read it</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">string_to_iplimage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imagestr</span><span class="p">)</span><span class="c">#Convert image</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">string_to_iplimage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">im</span><span class="p">):</span>
+</span><span class='line'>    <span class="c">#Convert the image return by urllib into an OpenCV image</span>
+</span><span class='line'>        <span class="n">pilim</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">source</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">pilim</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&quot;RGB&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateImageHeader</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">IPL_DEPTH_8U</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">cv</span><span class="o">.</span><span class="n">SetData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">tostring</span><span class="p">())</span>
+</span><span class='line'>        <span class="n">cv</span><span class="o">.</span><span class="n">CvtColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_RGB2BGR</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">getImage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">setup_Benchtest</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span><span class="c">#Create a folder with multiples images</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span> <span class="c">#Remove all files of the dir if there&#39;s any</span>
+</span><span class='line'>            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span><span class="nb">file</span><span class="p">))</span>
+</span><span class='line'>        <span class="n">os</span><span class="o">.</span><span class="n">removedirs</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">dl</span> <span class="o">=</span> <span class="n">Captcha_Downloader</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span> <span class="c">#Create the downloader once</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span> <span class="c">#Download 20 image</span>
+</span><span class='line'>        <span class="n">dl</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span class='line'>        <span class="n">im</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">getImage</span><span class="p">()</span>
+</span><span class='line'>        <span class="n">cv</span><span class="o">.</span><span class="n">SaveImage</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span><span class="nb">dir</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;.png&quot;</span><span class="p">),</span> <span class="n">im</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Ebay captcha</h2>
+
+<p>I have to choosen to work on Ebay captcha because at the first sight they are quite simple, but it is not inevitably the case as we will see. But in fact there is no real reasons. To setup the test envirronement I just use the captcha downloader described above with the registration form url, and the pattern in the image url which is always &ldquo;LoadBotImage&rdquo;.</p>
+
+<p>Note: I have noticed that ebay.com does not seems touse captcha to register a new user while ebay.fr does. Moreover the captcha is contained in an iframe, and this is the url of this iframe that you should provide to the downloader.</p>
+
+<p>Note again that this iframe url is generated and is not longer valid after a while.</p>
+
+<p>Once the environment is set we can process all the images to release numbers contours and delete the noise. To processing code is contained in the crack function and it basically apply successively:</p>
+
+<ul>
+<li>resizeImage: to increase the image size by 6 and get better results for the following operations</li>
+<li>dilateImage: Applied 4 times to delete noise</li>
+<li>erodeImage: Applied 4 times to recover from the dilatation</li>
+<li>thresholdImage: To keep interesing pixels</li>
+</ul>
+
+
+<p>Note: The crack function implemented can also return the contour only version of the image with a rough approximation of contours.</p>
+
+<h3>The code:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">urllib</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">re</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">HTMLParser</span> <span class="kn">import</span> <span class="n">HTMLParser</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">pytesser</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">cv2.cv</span> <span class="kn">as</span> <span class="nn">cv</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">captcha_downloader</span> <span class="kn">import</span> <span class="n">setup_Benchtest</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">generic_ocr_operations</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">crack</span><span class="p">(</span><span class="n">tocrack</span><span class="p">,</span><span class="n">withContourImage</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</span><span class='line'>    <span class="c">#Function that intent to release all characters on the image so that the ocr can detect them</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#We just apply 4 filters but with multiples rounds</span>
+</span><span class='line'>    <span class="n">resized</span> <span class="o">=</span> <span class="n">resizeImage</span><span class="p">(</span><span class="n">tocrack</span><span class="p">,</span> <span class="p">(</span><span class="n">tocrack</span><span class="o">.</span><span class="n">width</span><span class="o">*</span><span class="mi">6</span><span class="p">,</span> <span class="n">tocrack</span><span class="o">.</span><span class="n">height</span><span class="o">*</span><span class="mi">6</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">dilateImage</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">erodeImage</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">thresholdImage</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_THRESH_BINARY</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">withContourImage</span><span class="p">:</span> <span class="c">#If we want the image made only with contours</span>
+</span><span class='line'>        <span class="n">contours</span> <span class="o">=</span> <span class="n">getContours</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">contourimage</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateImage</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">GetSize</span><span class="p">(</span><span class="n">resized</span><span class="p">),</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">cv</span><span class="o">.</span><span class="n">Zero</span><span class="p">(</span><span class="n">contourimage</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">cv</span><span class="o">.</span><span class="n">DrawContours</span><span class="p">(</span><span class="n">contourimage</span><span class="p">,</span> <span class="n">contours</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">Scalar</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span> <span class="n">cv</span><span class="o">.</span><span class="n">Scalar</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_FILLED</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">contourimage</span> <span class="o">=</span> <span class="n">resizeImage</span><span class="p">(</span><span class="n">contourimage</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">GetSize</span><span class="p">(</span><span class="n">tocrack</span><span class="p">))</span>
+</span><span class='line'>        <span class="n">resized</span> <span class="o">=</span> <span class="n">resizeImage</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">GetSize</span><span class="p">(</span><span class="n">tocrack</span><span class="p">))</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">resized</span><span class="p">,</span> <span class="n">contourimage</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">resized</span> <span class="o">=</span> <span class="n">resizeImage</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">GetSize</span><span class="p">(</span><span class="n">tocrack</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">resized</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">process_all</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+</span><span class='line'>    <span class="nb">dir</span> <span class="o">=</span> <span class="s">&quot;Ebay&quot;</span> <span class="c">#Consider that all images are stored in the dir &#39;Ebay&#39;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="nb">file</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">),</span><span class="n">results</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">im</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">LoadImage</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span><span class="nb">file</span><span class="p">),</span><span class="n">cv</span><span class="o">.</span><span class="n">CV_LOAD_IMAGE_GRAYSCALE</span><span class="p">)</span> <span class="c">#Load the image</span>
+</span><span class='line'>        <span class="n">im</span> <span class="o">=</span> <span class="n">crack</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="c">#intent to crack it</span>
+</span><span class='line'>        <span class="n">res</span> <span class="o">=</span> <span class="n">pytesser</span><span class="o">.</span><span class="n">iplimage_to_string</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">psm</span><span class="o">=</span><span class="n">pytesser</span><span class="o">.</span><span class="n">PSM_SINGLE_WORD</span><span class="p">)</span> <span class="c">#Do characters recognition</span>
+</span><span class='line'>        <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="c">#Remove the two \n\n always put at the end of the result</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span> <span class="c">#Compare the result of the value contained in our list</span>
+</span><span class='line'>            <span class="k">print</span> <span class="nb">file</span><span class="o">+</span><span class="s">&quot;: &quot;</span><span class="o">+</span><span class="n">res</span><span class="o">+</span><span class="s">&quot; | &quot;</span><span class="o">+</span><span class="n">r</span><span class="o">+</span> <span class="s">&quot; OK&quot;</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="k">print</span> <span class="nb">file</span><span class="o">+</span><span class="s">&quot;: &quot;</span><span class="o">+</span><span class="n">res</span><span class="o">+</span><span class="s">&quot; | &quot;</span><span class="o">+</span><span class="n">r</span><span class="o">+</span><span class="s">&quot; NO&quot;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#Execute the following once to setup the envirronement</span>
+</span><span class='line'>    <span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">    dir = &quot;Ebay&quot;</span>
+</span><span class='line'><span class="sd">    url = &quot;https://scgi.ebay.fr/ws/eBayISAPI.dll?FetchCaptchaToken&amp;parentPage=RegisterEnterInfo&amp;tokenString=5WWZNQcAAAA%3D&amp;ej2child=true&quot;</span>
+</span><span class='line'><span class="sd">    pattern = &quot;LoadBotImage&quot;</span>
+</span><span class='line'><span class="sd">    setup_Benchtest(dir, url, pattern)</span>
+</span><span class='line'><span class="sd">    &#39;&#39;&#39;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#The list contains to got results for my bench</span>
+</span><span class='line'>    <span class="n">results</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;139866&quot;</span><span class="p">,</span><span class="s">&quot;400961&quot;</span><span class="p">,</span><span class="s">&quot;387740&quot;</span><span class="p">,</span><span class="s">&quot;431418&quot;</span><span class="p">,</span><span class="s">&quot;750113&quot;</span><span class="p">,</span><span class="s">&quot;572574&quot;</span><span class="p">,</span><span class="s">&quot;155885&quot;</span><span class="p">,</span><span class="s">&quot;440543&quot;</span><span class="p">,</span><span class="s">&quot;826316&quot;</span><span class="p">,</span><span class="s">&quot;233388&quot;</span><span class="p">,</span><span class="s">&quot;840189&quot;</span><span class="p">,</span><span class="s">&quot;349093&quot;</span><span class="p">,</span><span class="s">&quot;751181&quot;</span><span class="p">,</span><span class="s">&quot;270699&quot;</span><span class="p">,</span><span class="s">&quot;356535&quot;</span><span class="p">,</span><span class="s">&quot;743987&quot;</span><span class="p">,</span><span class="s">&quot;467643&quot;</span><span class="p">,</span><span class="s">&quot;342527&quot;</span><span class="p">,</span><span class="s">&quot;992978&quot;</span><span class="p">,</span><span class="s">&quot;879970&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">]</span>
+</span><span class='line'>    <span class="n">process_all</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="c">#Process all the images</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Results:</h3>
+
+<p>The table below show the results obtained with tests. On the left column the captcha image. The following column are:</p>
+
+<ul>
+<li>Without processing: This is the result obtained doing applying the ocr engine on the original image. This gives 20% of accuracy.</li>
+<li>After processing: Is the result obtained applying the ocr engine after the image processing. The result is 30% accurate</li>
+<li>After processing with contours: This is the result applying the ocr engine on the contour version of the image. As we can see results are less accurate with 25%.</li>
+</ul>
+
+
+<p><img class="center" src="/images/opencv-tutorial/captcha/table-ebay1.png" title="'Ebay results'" ></p>
+
+<p>As we can see results are not satisfying at all, that&rsquo;s why I have elaborated a probabilistic method presented in the next section.</p>
+
+<h2>Probabilistic cracking</h2>
+
+<p>I have elaborated this method with all the results obtained during my test. The fact is for a specific image I almost always find the right parameters to get a nice thresholded image that tesseract will recognise gently. The problem is this parameters change from an image to another. So the idea is to try multiples parameters for the same images, mix the results together to obtain the right recognition.</p>
+
+<p>Note: The algorithm relies on fact that are highly dependent of the captcha engine. Here I based my alogrithm on the fact that characters are always numbers and they are always only 6 numbers.</p>
+
+<p>The core loop which tries all the the different parameters is:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">for</span> <span class="n">dilate</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]:</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">erode</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]:</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">thresh</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">125</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">175</span><span class="p">,</span><span class="mi">200</span><span class="p">]:</span>
+</span><span class='line'>            <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="o">*</span><span class="mf">0.5</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)),(</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">),(</span><span class="n">w</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="n">h</span><span class="o">*</span><span class="mi">2</span><span class="p">),(</span><span class="n">w</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span><span class="n">h</span><span class="o">*</span><span class="mi">3</span><span class="p">)]:</span>
+</span><span class='line'>                <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crack</span><span class="p">(</span><span class="n">dilate</span><span class="p">,</span> <span class="n">erode</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="c">#Call crack successively all parameters</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So it will try 4 different numbers of dilate round, 4 different number of erode round, 4 different threshold values and 4 different size of images (which matter for detection). So 256 different images will b obtained and so 256 different values.</p>
+
+<p><strong>With this matters in mind the algorithm works as follow:</strong></p>
+
+<ul>
+<li>The image is processed with a set of values</li>
+<li>The string retreived from tesserect is split. The first character is sent in a dictionnary that hold all the first characters, and the second is sent in a dictionnary that hold all second characters .. (If a number is not numerics it is not added to dictionnaries</li>
+<li>At the end the class take the most occurring character of every dictionnaries and reconstitute a string of 6 numbers which constitute the final value.</li>
+</ul>
+
+
+<p>For example at the end of the analysis of the first image &ldquo;Ebay0.png&rdquo; dictionnaries contains:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="p">{</span><span class="s">&#39;1&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">}</span>
+</span><span class='line'><span class="p">{</span><span class="s">&#39;9&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s">&#39;1&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s">&#39;7&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</span><span class='line'><span class="p">{</span><span class="s">&#39;9&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;8&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s">&#39;7&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+</span><span class='line'><span class="p">{</span><span class="s">&#39;8&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s">&#39;3&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;5&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;6&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+</span><span class='line'><span class="p">{</span><span class="s">&#39;8&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s">&#39;3&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;5&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s">&#39;7&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;6&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</span><span class='line'><span class="p">{</span><span class="s">&#39;1&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;3&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;5&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s">&#39;6&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s">&#39;9&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;8&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And the result is : 198555 (which is wrong). As we can see there the result for the first character is obvious, but for all the others there is a balance between multiples numbers.</p>
+
+<h3>The code:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">pytesser</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">cv2.cv</span> <span class="kn">as</span> <span class="nn">cv</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">generic_ocr_operations</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">ProbabilisticCracker</span><span class="p">():</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">im</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">im</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">[{},{},{},{},{},{}]</span> <span class="c">#Will hold occurrence of characters</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">ocrvalue</span> <span class="o">=</span> <span class="s">&quot;&quot;</span> <span class="c">#Final value</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ocrvalue</span> <span class="c">#Return the final value</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">crack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dilateiter</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">erodeiter</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">155</span><span class="p">,</span><span class="mi">55</span><span class="p">)):</span> <span class="c">#Take all parameters</span>
+</span><span class='line'>        <span class="n">resized</span> <span class="o">=</span> <span class="n">resizeImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">width</span><span class="o">*</span><span class="mi">6</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">height</span><span class="o">*</span><span class="mi">6</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">dilateImage</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="n">dilateiter</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">erodeImage</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="n">erodeiter</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">thresholdImage</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span><span class="n">threshold</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_THRESH_BINARY</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">resized</span> <span class="o">=</span> <span class="n">resizeImage</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c">#Call the tesseract engine</span>
+</span><span class='line'>        <span class="n">ret</span> <span class="o">=</span> <span class="n">pytesser</span><span class="o">.</span><span class="n">iplimage_to_string</span><span class="p">(</span><span class="n">resized</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">ret</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c">#Main method</span>
+</span><span class='line'>        <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">width</span>
+</span><span class='line'>        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">height</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">for</span> <span class="n">dilate</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]:</span>
+</span><span class='line'>            <span class="k">for</span> <span class="n">erode</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]:</span>
+</span><span class='line'>                <span class="k">for</span> <span class="n">thresh</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">125</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">175</span><span class="p">,</span><span class="mi">200</span><span class="p">]:</span>
+</span><span class='line'>                    <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="o">*</span><span class="mf">0.5</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)),(</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">),(</span><span class="n">w</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="n">h</span><span class="o">*</span><span class="mi">2</span><span class="p">),(</span><span class="n">w</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span><span class="n">h</span><span class="o">*</span><span class="mi">3</span><span class="p">)]:</span>
+</span><span class='line'>                        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crack</span><span class="p">(</span><span class="n">dilate</span><span class="p">,</span> <span class="n">erode</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="c">#Call crack successively all parameters</span>
+</span><span class='line'>                        <span class="c">#print &quot;Val:&quot;,val</span>
+</span><span class='line'>                        <span class="bp">self</span><span class="o">.</span><span class="n">accumulateChars</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="c">#Call accumulate</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">postAnalysis</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">accumulateChars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">val</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span> <span class="c">#Only iterate the 6 first chars</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="c">#Break the length of the string lower</span>
+</span><span class='line'>                <span class="k">break</span>
+</span><span class='line'>            <span class="n">c</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span> <span class="c">#Put the char only if this is a digit</span>
+</span><span class='line'>                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+</span><span class='line'>                    <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c">#Add 1 if the entry character already exists</span>
+</span><span class='line'>                <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>                    <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">postAnalysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c">#Analyse at the end</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">vals</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">:</span><span class="c">#For every dictionnary</span>
+</span><span class='line'>            <span class="n">c</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="c">#Take the most occuring</span>
+</span><span class='line'>            <span class="c">#print &quot;Max:&quot;, c,v</span>
+</span><span class='line'>            <span class="bp">self</span><span class="o">.</span><span class="n">ocrvalue</span> <span class="o">+=</span> <span class="n">c</span> <span class="c">#Append it to the final string</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">m</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>        <span class="n">elt</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">:</span>
+</span><span class='line'>                <span class="n">m</span> <span class="o">=</span> <span class="n">v</span>
+</span><span class='line'>                <span class="n">elt</span> <span class="o">=</span> <span class="n">k</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">elt</span><span class="p">,</span> <span class="n">m</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">process_all</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+</span><span class='line'>    <span class="nb">dir</span> <span class="o">=</span> <span class="s">&quot;Ebay&quot;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="nb">file</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">),</span><span class="n">results</span><span class="p">):</span> <span class="c">#For every file in the directory</span>
+</span><span class='line'>        <span class="n">im</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">LoadImage</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span><span class="nb">file</span><span class="p">),</span><span class="n">cv</span><span class="o">.</span><span class="n">CV_LOAD_IMAGE_GRAYSCALE</span><span class="p">)</span> <span class="c">#Open the file</span>
+</span><span class='line'>        <span class="n">cracker</span> <span class="o">=</span> <span class="n">ProbabilisticCracker</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="c">#Instantiate the ProbabilistricCracker</span>
+</span><span class='line'>        <span class="n">cracker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="c">#Run it</span>
+</span><span class='line'>        <span class="n">res</span> <span class="o">=</span> <span class="n">cracker</span><span class="o">.</span><span class="n">getValue</span><span class="p">()</span> <span class="c">#Take the final value</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span> <span class="c">#Compare it with the right one</span>
+</span><span class='line'>            <span class="k">print</span> <span class="nb">file</span><span class="o">+</span><span class="s">&quot;: &quot;</span><span class="o">+</span><span class="n">res</span><span class="o">+</span><span class="s">&quot; | &quot;</span><span class="o">+</span><span class="n">r</span><span class="o">+</span> <span class="s">&quot; OK&quot;</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="k">print</span> <span class="nb">file</span><span class="o">+</span><span class="s">&quot;: &quot;</span><span class="o">+</span><span class="n">res</span><span class="o">+</span><span class="s">&quot; | &quot;</span><span class="o">+</span><span class="n">r</span><span class="o">+</span><span class="s">&quot; NO&quot;</span>
+</span><span class='line'>        <span class="n">nb</span><span class="o">=</span><span class="mi">6</span>
+</span><span class='line'>        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">c1</span><span class="p">,</span><span class="n">c2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">r</span><span class="p">):</span> <span class="c">#Make a char/char comparison to compute the accuracy</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">c1</span> <span class="o">==</span> <span class="n">c2</span><span class="p">:</span>
+</span><span class='line'>                <span class="n">count</span> <span class="o">+=</span><span class="mi">1</span>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&quot;Avg: &quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">count</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="n">nb</span><span class="p">,</span> <span class="s">&quot;%&quot;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">results</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;139866&quot;</span><span class="p">,</span><span class="s">&quot;400961&quot;</span><span class="p">,</span><span class="s">&quot;387740&quot;</span><span class="p">,</span><span class="s">&quot;431418&quot;</span><span class="p">,</span><span class="s">&quot;750113&quot;</span><span class="p">,</span><span class="s">&quot;572574&quot;</span><span class="p">,</span><span class="s">&quot;155885&quot;</span><span class="p">,</span><span class="s">&quot;440543&quot;</span><span class="p">,</span><span class="s">&quot;826316&quot;</span><span class="p">,</span><span class="s">&quot;233388&quot;</span><span class="p">,</span><span class="s">&quot;840189&quot;</span><span class="p">,</span><span class="s">&quot;349093&quot;</span><span class="p">,</span><span class="s">&quot;751181&quot;</span><span class="p">,</span><span class="s">&quot;270699&quot;</span><span class="p">,</span><span class="s">&quot;356535&quot;</span><span class="p">,</span><span class="s">&quot;743987&quot;</span><span class="p">,</span><span class="s">&quot;467643&quot;</span><span class="p">,</span><span class="s">&quot;342527&quot;</span><span class="p">,</span><span class="s">&quot;992978&quot;</span><span class="p">,</span><span class="s">&quot;879970&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">]</span>
+</span><span class='line'>    <span class="n">process_all</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Results:</h3>
+
+<p>The table shown below shows the results of the probabilistic algorithm andthe accuracy. As we can see the algorithm detect more coherent suites of numbers but the overall average of good results is not really better.</p>
+
+<p><img class="center" src="/images/opencv-tutorial/captcha/table-ebay2.png" title="'Ebay results 2'" ></p>
+
+<h2>Conclusion</h2>
+
+<p>When you attack a single captacha it always end up by working adjusting all parameters filters, round and so on, but when you try to elaborate a generic algorithm for a given captcha engine it is far more complex even for simple captcha as the Ebay captcha engine. But as we can see the probabilistic way give better results far more accurate but still not satisfiying due to the limitation of the OCR engine. As you can see the tesseract engine is really capricious (and does not seems to be the best).</p>
+
+<p>With today&rsquo;s captcha engines more than character it is more shape recoginition that should be done. So a good idea would be for a given captcha engine keep in a databse multiples instances of every characters. Then to decrypt a captcha every characters should be split and the shape compared with the registered elements in the database to find the right character. Obviously using this method makes OCR engines useless.</p>
+
+<p><a href="/opencv-tutorial/motion-detection-with-opencv.html" title="">&lt;&lt;Motion detection</a> | <a href="/opencv-tutorial/" title="">Home</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Robin David</span></span>
+
+      
+
+
+
+
+
+
+
+
+
+
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/opencv/'>OpenCV</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/opencv-tutorial/cracking-basic-captchas-with-opencv.html" data-via="" data-counturl="http://www.robindavid.fr/opencv-tutorial/cracking-basic-captchas-with-opencv.html" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+<!--   <a href="http://www.robindavid.fr" title="Robin David"><img id="logo" src="http://www.robindavid.fr/images/" /></a> -->
+  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David"><i class="fa fa-pagelines"></i>Robin David</a></h1>
+  <h3 id="site_subtitle">A site to remotly back up my brain.</h3>
+</section>
+<section>
+<!--   <h1 class="fa fa-pagelines"> Robin David</h1> -->
+  <!-- Picture if needed -->
+
+
+  <div style="text-align:center;" class='contact'>
+	  <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/>
+    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>
+    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>
+    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>
+    <a href='/atom.xml' title='rss'><i class='fa fa-rss fa-2x'></i></a>
+  </div>
+
+</section>
+<section id="menu">
+<ul class="main-navigation" style="font-size:1.5em;font-weight:bold;">
+  <li><a href="/"><i  class="fa fa-home"></i> &nbsp;&nbsp;Home</a></li>
+  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <li><a href="/opencv-tutorial"><i class="fa fa-picture-o"></i> &nbsp;&nbsp;Tuto OpenCV</a></li>
+  <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li>
+  <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li>
+</ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First config and services configuration</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/08/windows-forensic-memo/">Windows Forensic Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/16/wikipedia-frequency-analysis/">Wikipedia frequency analysis</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/useful-basic-function-python-memo/">Basic but useful function python Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage cryptanalysis in Python</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/RobinDavid">@RobinDavid</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'RobinDavid',
+            count: 5,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/autoit/'>AutoIt</a> (1)</li>
+<li class='category'><a href='/blog/categories/bsd/'>BSD</a> (1)</li>
+<li class='category'><a href='/blog/categories/bash/'>Bash</a> (4)</li>
+<li class='category'><a href='/blog/categories/cryptography/'>Cryptography</a> (2)</li>
+<li class='category'><a href='/blog/categories/linux/'>Linux</a> (7)</li>
+<li class='category'><a href='/blog/categories/linux-security/'>Linux Security</a> (3)</li>
+<li class='category'><a href='/blog/categories/memo/'>Memo</a> (3)</li>
+<li class='category'><a href='/blog/categories/network/'>Network</a> (1)</li>
+<li class='category'><a href='/blog/categories/piece-of-code/'>Piece of Code</a> (5)</li>
+<li class='category'><a href='/blog/categories/raspberry-pi/'>Raspberry Pi</a> (1)</li>
+<li class='category'><a href='/blog/categories/windows/'>Windows</a> (1)</li>
+
+  </ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Robin David -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

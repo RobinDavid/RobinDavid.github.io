@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Python Memo - Robin David</title>
+  <meta name="author" content="Robin David">
+
+  
+  <meta name="description" content="compile() Can compile on the fly new python code with the given string into python instructions &gt;&gt;&gt; eval_code = compile('100 + 200', '', ' &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.robindavid.fr/blog/2011/06/13/python-memo/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Robin David" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-48325647-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.robindavid.fr" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Python Memo</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-13T00:00:00+00:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><br/>
+<ul>
+	<li><strong>compile()</strong>
+	Can compile on the fly new python code with the given string into python instructions
+<br/>
+<code>
+&gt;&gt;&gt; eval_code = compile('100 + 200', '', 'eval')<br/>
+&gt;&gt;&gt; eval(eval_code)<br/>
+300
+</code><br/>
+<span style="color: #0000ff;">Note:It can also compile all file etc.</span></li>
+<br/>
+	<li><strong>sys.exitfunc()</strong>
+Do nothing by default, but can be overwritten and is called when sys.exit() is called<br/>
+<code>import sys<br/>
+def my_exit_func(old_exit = prev_exit_func):<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# perform cleanup<br/>
+sys.exitfunc = my_exit_func #Override old function with our.
+</code>
+</li>
+
+<br/>
+	<li><strong>urlparse</strong>
+	with URL component: <em>scheme://net_loc/path;params?query#frag</em><br/>
+<code>
+import urlparse<br/>
+urlparse("http://www.google.fr/test/index.html?val=1&amp;test=2#foo")<br/>
+ParseResult(scheme='http', netloc='www.google.fr', path='/test/index.html', params='', query='val=1&amp;test=2', fragment='foo')<br/>
+#note:  urlunparse do exactly the reverse and take a tuple of 6
+</code>
+<br/>
+<li><strong>urlencode</strong><br/>
+<code>
+import urllib<br/>
+aDict = { 'name': 'Georgina Garcia', 'hmdir': '~ggarcia' }<br/>
+urllib.urlencode(aDict)<br/>
+'name=Georgina+Garcia&amp;hmdir=%7eggarcia'<br/>
+</code>
+</li>
+
+<br/>
+<li><strong>Call C functions Windows</strong><br/>
+<code>
+from ctypes import cdll<br/>
+msvcrt = cdll.msvcrt #Printf is in the msvcrt DLL<br/>
+message = "Hello World!\n"<br/>
+msvcrt.printf("Testing: %s", message)<br/>
+</code>
+</li>
+<br/>
+
+<li><strong>Call C functions Linux</strong><br/>
+<code>
+from ctypes import *<br/>
+libc = CDLL("libc.so.6")<br/>
+message_string = "Hello world!\n"<br/>
+libc.printf("Testing: %s", message_string)<br/>
+</code>
+</li>
+
+</ul>
+<br/><br/>
+
+<h3> Other memo </h3>
+
+<ul>
+	<li><p>str = &#8220;Python&#8221;<br/>
+	<strong>&#8216;ton&#8217; in str</strong> Return false could be used with a if without regex<br/>
+	<strong>&#8216;thon&#8217; in str</strong> Return true</p></li>
+
+<br/>
+<li><p><strong>[i for i in range(10)]</strong> # Return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]<br/>
+<strong>[i for i in range(10) if i % 2 == 0] </strong># Return [0, 2, 4, 6, 8]<br/>
+<strong>[i*2 for i in range(10)]</strong> # Return [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]<br/>
+So it is possible in one line to pass through all array element and do something on them (but not printing)</p></li>
+<br/>
+	<li>Ternary operator: <strong>C ? T : F</strong> means: if T if C else F</li>
+<br/>
+<li>max = x if x &gt; y else Y</li>
+<br/>
+<li>MD5 usage:<br/>
+<code>
+from hashlib import md5<br/>
+hash = md5("Hello world")<br/>
+print hash.digest().encode('hex')<br/>
+</code>
+</li>
+
+<br/>
+
+<li><strong>sys.stdout.write(&#8220;Hello World\n&#8221;)</strong> alternate way to print Hello world writing directly stdout</li>
+
+<br/>
+
+	<li><strong>sys.stdin.readline()</strong> read directly a line on the stdin</li>
+<br/>
+
+	<li><strong>print(text, end=&#8221; &#8220;) </strong> in python 3.x define the end character instead of jump line it will add a space</li>
+<br/>
+
+	<li>Anonymous function:<br/> def add-one(x): <br/>&nbsp;&nbsp;&nbsp;&nbsp;return x + 1<br/> Could be substitued by: <br/><strong>add_one = lambda x: x + 1</strong></li><br/>
+	<li><span style="text-decoration: underline;">Procedural</span>: <strong>my_str = string.split(my_str)</strong><span style="color: #0000ff;"> #Note: Need to import string</span></li>
+	<li><span style="text-decoration: underline;">Object Oriented</span>: <strong>my_str = my_str.split()</strong> <span style="color: #0000ff;">#Note: Could create a string on the fly if needed with: &#8221;.split()</span></li><br/>
+	<li><strong>round()</strong> Round the float to the given precision ex: <br/><span style="color: #008000;">&#8217;%.2f&#8217; % round(1.185, 2) # Return 1.19</span></li><br/>
+	<li><strong>isinstance()</strong></li>
+	<li><strong>issubclass()</strong> <span style="color: #0000ff;">#Note: without self it is a static function attribute</span></li><br/>
+	<li><strong>cmp()</strong> Compare two object, return 0 if equal</li>
+	<li><strong>str()</strong> Return a printable format of an object</li><br/>
+	<li>String formating <br/><strong>&#8220;Name: %s, age: %d&#8221; % (&#8216;Dave&#8217;,23)</strong> Specify the type expected for variable <strong><br/>&#8220;Name: {0}, age: {1}&#8221;.format(&#8216;Dave&#8217;,23)</strong> Here format determine the type of the variableso it works in all cases.</li><br/>
+	<li><strong>&#8220;My string&#8221;.replace(&#8220;i&#8221;,&#8221;j&#8221;)</strong> Easy way to replace elements in a string</li>
+	<li><strong>&#8220;My string&#8221;.find(&#8220;my&#8221;)</strong> -1 not found, 0 equal, 2 found <span style="color: #0000ff;">Note: This two do not support regular expression</span></li><br/>
+	<li><strong>&#8220;My string&#8221;.center(25)</strong> Return the string with 25 spaces before and after</li><br/>
+	<li>Miscellanous string transformations<br/> test = &#8220;python is cool&#8221; <br/><strong>test.title()</strong> Return &#8220;Python Is Cool&#8221; <br/><strong>test.swapcase()</strong> Return &#8220;pYTHON iS cOOL&#8221; <br/><strong>test.isalpha() </strong>Return True if ALL character are alphabetics (.!, excluded)</li><br/>
+	<li>test = [2,1,5,3] <strong>test.sort()</strong> <br/>Return [1, 2, 3, 5]</li><br/>
+	<li><strong>y = copy.deepcopy(x)</strong> <br/>Copy object into x and not only just references, because otherwise change y modify x also. <span style="color: #0000ff;"><br/>Note: Originally made for compute efficiency reasons.</span></li><br/>
+	<li><strong>ord(&#8216;A&#8217;)</strong> Return the decimal value of &#8216;A&#8217; (65)</li>
+	<br/>
+
+	<li><strong>sum([2,3,4])</strong>
+Return the sum of the list</li>
+<br/>
+	<li><strong>int(&#8220;4&#8221;)</strong>
+This transform the string 4 into integer 4
+<span style="color: #0000ff;">Note: It is the same for float(), and complex()</span></li>
+<br/>
+	<li><strong>del(self)</strong>
+Kill an object itself</li>
+<br/>
+	<li><strong>def my_func(a=0,b=0)</strong>
+Could specify the name of a variable in a function call ex:
+my_fun(b=0) <span style="color: #0000ff;"># if we had put only 0 it would be the &#8220;a&#8221; variable</span></li>
+<br/>
+	<li><strong>global var</strong> #define a global variables</li>
+	<li><strong>local var </strong> #define a variable in the block</li>
+<br/>
+	<li><strong>var1 = var2 = &#8220;hello&#8221; </strong>#Assign the same value for two differents variables</li>
+	<li><strong>var1,var2 = &#8220;Hello&#8221;,1 </strong> #Assign two variables on one line</li>
+<br/>
+	<li><span style="color: #0000ff;">Note : raw_input doesn&#8217;t exist anymore in python 3.2 and input accept string in 3.2</span></li>
+<br/>
+	<li> Other types:
+<strong>- complex</strong>
+<strong>- bool</strong></li>
+<br/>
+	<li><strong>*</strong> is a tuple</li>
+	<li><strong>**</strong> is a dictionnary
+#used for varargs&#8217;s declaration</li>
+<br/>
+	<li>Dictionnary
+<strong>d.get{&#8216;key1&#8217;,&#8221;N/A&#8221;} </strong> # Return the key if it exists the 2nd argument if not.
+<strong>c = set(a)</strong> # Create a set with &#8220;a&#8221; a list</li>
+<br/>
+	<li>IN PYTHON 3 a string is a byte array with an encoding. So a string is excpected you should use:
+<strong>bytes(&#8216;my message\n&#8217;,&#8217;utf-8&#8217;)</strong>
+#Or Send directly the string but could fail</li>
+</ul>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Robin David</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-13T00:00:00+00:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/memo/'>Memo</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/blog/2011/06/13/python-memo/" data-via="" data-counturl="http://www.robindavid.fr/blog/2011/06/13/python-memo/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2011/04/24/xdotool-xwininfo-memo/" title="Previous Post: xdotool + xwininfo Memo">&laquo; xdotool + xwininfo Memo</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2011/08/10/use-debootstrap/" title="Next Post: Use Debootstrap">Use Debootstrap &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+<!--   <a href="http://www.robindavid.fr" title="Robin David"><img id="logo" src="http://www.robindavid.fr/images/" /></a> -->
+  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David"><i class="fa fa-pagelines"></i>Robin David</a></h1>
+  <h3 id="site_subtitle">A site to remotly back up my brain.</h3>
+</section>
+<section>
+<!--   <h1 class="fa fa-pagelines"> Robin David</h1> -->
+  <!-- Picture if needed -->
+
+
+  <div style="text-align:center;" class='contact'>
+	  <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/>
+    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>
+    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>
+    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>
+    <a href='/atom.xml' title='rss'><i class='fa fa-rss fa-2x'></i></a>
+  </div>
+
+</section>
+<section id="menu">
+<ul class="main-navigation" style="font-size:1.5em;font-weight:bold;">
+  <li><a href="/"><i  class="fa fa-home"></i> &nbsp;&nbsp;Home</a></li>
+  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <li><a href="/opencv-tutorial"><i class="fa fa-picture-o"></i> &nbsp;&nbsp;Tuto OpenCV</a></li>
+  <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li>
+  <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li>
+</ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First config and services configuration</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/08/windows-forensic-memo/">Windows Forensic Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/16/wikipedia-frequency-analysis/">Wikipedia frequency analysis</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/useful-basic-function-python-memo/">Basic but useful function python Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage cryptanalysis in Python</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/RobinDavid">@RobinDavid</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'RobinDavid',
+            count: 5,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/autoit/'>AutoIt</a> (1)</li>
+<li class='category'><a href='/blog/categories/bsd/'>BSD</a> (1)</li>
+<li class='category'><a href='/blog/categories/bash/'>Bash</a> (4)</li>
+<li class='category'><a href='/blog/categories/cryptography/'>Cryptography</a> (2)</li>
+<li class='category'><a href='/blog/categories/linux/'>Linux</a> (7)</li>
+<li class='category'><a href='/blog/categories/linux-security/'>Linux Security</a> (3)</li>
+<li class='category'><a href='/blog/categories/memo/'>Memo</a> (3)</li>
+<li class='category'><a href='/blog/categories/network/'>Network</a> (1)</li>
+<li class='category'><a href='/blog/categories/piece-of-code/'>Piece of Code</a> (5)</li>
+<li class='category'><a href='/blog/categories/raspberry-pi/'>Raspberry Pi</a> (1)</li>
+<li class='category'><a href='/blog/categories/windows/'>Windows</a> (1)</li>
+
+  </ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Robin David -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Bash tips - Robin David</title>
+  <meta name="author" content="Robin David">
+
+  
+  <meta name="description" content="${test?} return an error if the variable &#8220;test&#8221; is not initialized $$ return the script pid (eg: kill -15 `echo $$`) kill itself mytable &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.robindavid.fr/blog/2010/10/09/bash-tips/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Robin David" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-48325647-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.robindavid.fr" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Bash Tips</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-09T00:00:00+00:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><ul>
+	<li><strong>${test?}</strong> return an error if the variable &#8220;test&#8221; is not initialized</li>
+	<li><strong>$$</strong> return the script pid (eg: kill -15 `echo $$`) kill itself</li>
+	<li><strong>mytable=(val1 val2 val3)</strong> initialize the table mytable with the given values</li>
+	<li><strong>echo {1..10}</strong> print 1 2 3 4 5 6 7 8 9 10</li>
+	<li><strong>expr</strong> allow you to do every operations, but interestingly fast because it&#8217;s a builtin command</li>
+	<li>embrace &#8220;{&#8221; and &#8220;}&#8221; permit to redirect a bloc of instructions into a file, or to read values from a file</li>
+	<li><strong>xargs</strong> is powerfull and can for instance apply a command to the results of a pipe (eg:find / -name test | xargs rm -f)</li>
+	<li><strong>tr &#8216;a-z&#8217; &#8216;A-Z&#8217;</strong> convert strings from lowercase to uppercase</li>
+	<li><strong>&gt;|</strong> force the redirection even tough the noclobber is active</li>
+	<li>To do a carrier return in bash with echo you need to use -e and \r\c (\c stop interpretation of following characters)</li>
+	<li><strong>${!tab}</strong> return the last element of the table &#8220;tab&#8221;</li>
+	<li><strong>exit $?</strong> or <strong>exit</strong> exit the script with the return value of the last command</li>
+	<li><strong>exit</strong></li>
+	<li>in conditions, the difference between [[ ]] and [ ] is that we can put || and &amp;&amp; in [[ ]] and not in [ ]</li>
+	<li><strong>$SECONDS</strong> contains the execution duration since the beginning of the script</li>
+	<li><strong>kill -s 14 $$</strong> send the signal 14 to the script itself, so after we can trap it with trap my_function 14</li>
+	<li><strong>read -t 10 my_var</strong> read the variable &#8220;my_var&#8221; with a limit of 10 seconds</li>
+	<li><strong>${my_var-&#8220;defaut&#8221;}</strong> initialize my_var with default value &#8220;default&#8221; if she hadn&#8217;t been initialized yet</li>
+	<li><strong>${param?msg_err}</strong> print &#8220;msg_err&#8221; if the variable param do not exists</li>
+	<li><strong>${file%$ext}$newext</strong> it replace the extension of a $file with the $newext</li>
+	<li><strong>${var:pos:len}</strong></li>
+	<li><strong>${var/Model/Remplacment}</strong> replace first instance of Model in var</li>
+	<li><strong>${var//Model/Remplacment}</strong> replace all instances</li>
+	<li><strong>declare</strong> allow to declare differents variables<br/>
+	      -r static var<br/>
+	      -i integer<br/>
+	      -a table<br/>
+	      -f function<br/>
+	      (without argument print all previous declared functions)<br/>
+	      Note:only variables declared with declare are local in a function<br/>
+	      -x export the var in the shell<br/>
+	</li>
+	<li><strong>$RANDOM</strong> give a value between 0 and 32767 (with a expr command you can reduce it to the range you want)</li>
+	<li><strong>(( t = a&lt;45?7:11 ))</strong> if a&lt;45 then t=7 else t=11</li>
+	<li>set in bash can &#8220;explode&#8221; a var (like in PHP), depending of his value if IFS=&#8221; &#8220;var=&#8221;Hello me&#8221;, set $var we have now $1=&#8221;Hello&#8221; and $2=&#8221;me&#8221;</li>
+	<li><strong>for name in $(awk &#8216;BEGIN{FS=&#8221;:&#8221;}{print $1}&#8217; &lt; /etc/passwd )</strong> retrieve all names in /etc/passwd (and use a specific IFS)</li>
+	<li><strong>var=`&lt;file`</strong> or <strong>var=`cat file`</strong> there are the sames, it give to var the value of the content of file</li>
+	<li><strong>pidof</strong> return the pidof of the given process name</li>
+	<li>use -n with echo to do not jump to next ligne after the echo</li>
+	<li><strong>wait $pid</strong> wait the end of the process given by the pid</li>
+	<li>-exec of the command find allow to execute command for each file found by the find</li>
+	<li><strong>ls | xargs -p -l gzip</strong> it will create an archive with all the files of the current directory</li>
+	<li><strong>ls . | xargs -i -t cp ./{} /tmp</strong> it will copy of the files of the current directory into tmp</li>
+	<li>the difference between cron and at is that cron is powerfull for common regularily tasks whereas at is better for isolated tasks</li>
+	<li><strong>expand</strong> transform space into tab</li>
+	<li><strong>unexpand</strong> do the reverse, transform tab into space</li>
+	<li><strong>read var1 var2</strong> read to vars in one command</li>
+	<li><strong>&amp;&amp;</strong> (command1 &amp;&amp; command2) return true only if the results of the two commands is true whereas &#8220;;&#8221; return the result of the second</li>
+	<li><strong>||</strong> return true if one of the two commands is true</li>
+	<li><strong>mv test{1,2} linuxtest{1,2}</strong> rename test1 in linuxtest1 and test2 in linuxtest2</li>
+	<li><strong>uuencode</strong> and <strong>uudecode</strong> allow to code decode binary files in ASCII and reverse</li>
+	<li><strong>ipcalc</strong> allow to do reverse DNS</li>
+	<li><strong>reset</strong> really reset a prompt by cleaning verything printed before</li>
+	<li><strong>script</strong> save all typed command in a file</li>
+	<li><strong>bc</strong> permit to do operations on floating point <br/>Example: echo `echo &#8220;ibase=2; 0110&#8221; | bc` convert 0110 in hexa</li>
+	<li><strong>units</strong> base converter</li>
+	<li><strong>last</strong> allow you to see last incoming connections, reboot etc..</li>
+	<li><strong>setterm</strong>
+	    <div style="padding-left: 30px;">Allow you to enable lot&#8217;s of things in the bash like:</div>
+	    <div style="padding-left: 30px;">cursor on/off</div>
+	    <div style="padding-left: 30px;">bold on/off</div>
+	    <div style="padding-left: 30px;">underline on/off</div>
+	    <div style="padding-left: 30px;">Example: setterm bold on</div>
+	</li>
+	<li><strong>lsof</strong> show all opened files on the system</li>
+	<li><strong>strace</strong> show system calls</li>
+	<li><strong>ltrace</strong> show dynamic libraries calls</li>
+	<li><strong>fuser</strong> identify PIDs which are accessing to a specific files or folder</li>
+	<li><strong>lockfile /home/robin/test.lock</strong> will create a file test.lock, which will lock the file test</li>
+	<li><strong>ulimit</strong> can limit, ressources given to a user like number of process, file sizes etc</li>
+	<li><strong>ldd</strong> print dynamic libraries dependencies of a binary</li>
+	<li><strong>cat - $file &lt;&lt;&lt;$title &gt; $file.new</strong> write $title at the top of $file and write the result in file.new</li>
+	<li><strong>: &gt; file</strong> clear the given file</li>
+	<li><strong>exec &lt; file</strong> execute, what there is in the file</li>
+	<li><strong>$BASH_SUBSHELL</strong> show the subshell level where the variable is launched</li>
+	<li><strong>diff &lt;(ls $first_directory) &lt;(ls $second_directory)</strong> will compare the two directories</li>
+	<li>If you declare an exit function, when you will launch exit, it will call the function instead of the command</li>
+	<li><strong>local var</strong> declare var as local variable</li>
+	<li><strong>command1 &amp;&amp; command2</strong> play the role of a simple if, because command2 is executed only if command1 result return true</li>
+	<li><strong>command1 || command2</strong> command2 is executed only if command1 result return an error</li>
+	<li><strong>exec 5&lt;&gt;/dev/tcp/www.net.com/80</strong><span style="white-space: pre;"> </span>#open a socket which is send to the file descriptor 5<br/>
+	    <div style="padding-left: 30px;"><strong>echo -e &#8220;GET / HTTP/1.0\n&#8221; &gt;&amp;5</strong><span style="white-space: pre;"> </span>#we write in the file descriptor with a GET</div>
+	    <div style="padding-left: 30px;"><strong>cat &lt;&amp;5</strong><span style="white-space: pre;"><strong> </strong> </span>#we print what the server answer</div>
+	</li>
+	<li><strong>echo &#8220;0&#8221; &gt; /dev/ram0</strong> write 0 in the ram</li>
+	<li><strong>read -p &#8220;Enter your name :&#8221; name</strong> read a var with a specific prompt</li>
+	<li><strong>stat</strong> show metadata informations about files</li>
+	<li><strong>update-rc.d [my service] [defaults, remove]</strong> allow to add or remove the given service at boot time</li>
+	<li><strong>netcat -lvp [PORT] -e cmd.exe</strong> Redirect all input outputs to the given program (simple remote shell/backdoor with netcat)</li>
+	<li><strong>file2cable -v -i [INTERFACE] -f [MY FILE]</strong> Send to file &#8216;as is&#8217; on the network (so it would do better to contain frames encoded)</li>
+	<li><strong>urlsnarf -i [INTERFACE]</strong> retrieve and print on output all URL&#8217;s that transit through the interface</li>
+
+	<li><strong>gunzip -dc ../initrd.gz |cpio -id</strong> decompress a initrd.gz file</li><br/>
+		<li><strong>find . | cpio &#8211;quiet &#8211;dereference -o -H newc | gzip -9 &gt; ../initrd.gz</strong> recompress files in the current folder into a new custom initrd file</li>
+
+</ul>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Robin David</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-09T00:00:00+00:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/bash/'>Bash</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/blog/2010/10/09/bash-tips/" data-via="" data-counturl="http://www.robindavid.fr/blog/2010/10/09/bash-tips/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2010/10/15/enabling-wake-on-lan-linux/" title="Next Post: Enabling Wake On Lan Linux ?">Enabling Wake On Lan Linux ? &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+<!--   <a href="http://www.robindavid.fr" title="Robin David"><img id="logo" src="http://www.robindavid.fr/images/" /></a> -->
+  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David"><i class="fa fa-pagelines"></i>Robin David</a></h1>
+  <h3 id="site_subtitle">A site to remotly back up my brain.</h3>
+</section>
+<section>
+<!--   <h1 class="fa fa-pagelines"> Robin David</h1> -->
+  <!-- Picture if needed -->
+
+
+  <div style="text-align:center;" class='contact'>
+	  <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/>
+    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>
+    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>
+    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>
+    <a href='/atom.xml' title='rss'><i class='fa fa-rss fa-2x'></i></a>
+  </div>
+
+</section>
+<section id="menu">
+<ul class="main-navigation" style="font-size:1.5em;font-weight:bold;">
+  <li><a href="/"><i  class="fa fa-home"></i> &nbsp;&nbsp;Home</a></li>
+  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <li><a href="/opencv-tutorial"><i class="fa fa-picture-o"></i> &nbsp;&nbsp;Tuto OpenCV</a></li>
+  <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li>
+  <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li>
+</ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First config and services configuration</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/08/windows-forensic-memo/">Windows Forensic Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/16/wikipedia-frequency-analysis/">Wikipedia frequency analysis</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/useful-basic-function-python-memo/">Basic but useful function python Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage cryptanalysis in Python</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/RobinDavid">@RobinDavid</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'RobinDavid',
+            count: 5,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/autoit/'>AutoIt</a> (1)</li>
+<li class='category'><a href='/blog/categories/bsd/'>BSD</a> (1)</li>
+<li class='category'><a href='/blog/categories/bash/'>Bash</a> (4)</li>
+<li class='category'><a href='/blog/categories/cryptography/'>Cryptography</a> (2)</li>
+<li class='category'><a href='/blog/categories/linux/'>Linux</a> (7)</li>
+<li class='category'><a href='/blog/categories/linux-security/'>Linux Security</a> (3)</li>
+<li class='category'><a href='/blog/categories/memo/'>Memo</a> (3)</li>
+<li class='category'><a href='/blog/categories/network/'>Network</a> (1)</li>
+<li class='category'><a href='/blog/categories/piece-of-code/'>Piece of Code</a> (5)</li>
+<li class='category'><a href='/blog/categories/raspberry-pi/'>Raspberry Pi</a> (1)</li>
+<li class='category'><a href='/blog/categories/windows/'>Windows</a> (1)</li>
+
+  </ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Robin David -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

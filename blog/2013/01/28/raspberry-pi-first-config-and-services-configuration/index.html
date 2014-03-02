@@ -1,0 +1,534 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Raspberry Pi: First config and services configuration - Robin David</title>
+  <meta name="author" content="Robin David">
+
+  
+  <meta name="description" content="What is the Raspberry Pi ? I think there&#8217;s no need to present the Pi anymore. This is basically a whole computer embed on chip based on ARM. It &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.robindavid.fr/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Robin David" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-48325647-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.robindavid.fr" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Raspberry Pi: First Config and Services Configuration</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-28T00:00:00+00:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>What is the Raspberry Pi ?</h2>
+I think there&#8217;s no need to present the Pi anymore. This is basically a whole computer embed on chip based on ARM. It has been designed by David Braben. The official site is the following: <a href="http://www.raspberrypi.org/">http://www.raspberrypi.org/</a>
+<br/>
+<h2>Initial configuration</h2>
+Here is a small memo of the things I do when I configure a Pi for the first time.
+
+The first thing is to connect to the Pi using ssh the default login is <strong>pi</strong> and the password is <strong>raspberry</strong>. <span style="color: #ff0000;">So this will be the first thing to change !</span>
+<br/>
+<strong>sudo su</strong><br/>
+<strong>passwd</strong>
+Set a root passwd which is not the case by default.<br/>
+
+<strong>passwd pi</strong>
+Change the pi passwd ! (you might also delete the user and create a new one)<br/>
+
+<strong>visudo</strong>
+Remove pi from sudoers<br/>
+
+<strong>aptitude update</strong><br/>
+<strong>aptitude safe-upgrade</strong><br/>
+<strong>aptitude install vim host htop</strong><br/><br/>
+# Network Configuration
+<strong>vim /etc/hostname</strong><br/>
+<strong>vim /etc/network/interfaces</strong><br/>
+<pre>
+#iface eth0 inet static
+#     address 192.168.0.5
+#     network 192.168.0.0
+#     netmask 255.255.255.0
+#     broadcast 192.168.0.255
+#     gateway 192.168.0.1
+</pre>
+<strong>vim /etc/resolv.conf</strong><br/>
+
+<strong>raspi-config</strong>
+#To enlarge the filesystem, disable X, and change timezone<br/><br/>
+
+The default package repository (mirrordirector.raspbian.org) is not really reliable, and an update should sometimes in my case be relaunch few times to get through. So I use another package repository:
+<br/><strong>echo &#8216;deb http://mirrors.ircam.fr/pub/raspbian/raspbian/ wheezy main contrib non-free rpi&#8217; &gt; /etc/apt/sources.list</strong><br/>
+
+<h3>SSH Key exchange</h3>
+For more simplicity I have put the public key of my main computer in the ssh authorized hosts of the pi to login automatically, here are the few steps to do.
+<br/><br/>
+On the local host:
+<ul>
+	<li><strong>ssh-keygen -t rsa</strong></li>
+	<li><strong>scp .ssh/id_rsa.pub pi@192.168.0.5:~/</strong></li>
+	<li><strong>echo &#8216;alias copi=&#8221;ssh pi@192.168.0.5 -X&#8221; &#8217; &gt;&gt; ~/.bashrc</strong></li>
+</ul>
+On the pi:
+<ul>
+	<li><strong>cat id_rsa.pub &gt;&gt; .ssh/authorized_keys</strong></li>
+	<li><strong>chmod 600 .ssh/authorized_keys</strong></li>
+</ul>
+
+
+<h2>Services configuration</h2>
+Small memo of the operations to perform to configure some services on the Raspberry.<br/><br/><br/>
+<h3>OpenVPN</h3>
+The following tutorial is really perfect: <a href="http://www.raspberrypi.org/phpBB3/viewtopic.php?f=36&amp;t=21566">http://www.raspberrypi.org/phpBB3/viewtopic.php?f=36&amp;t=21566</a>
+<br/>
+<span style="color: #0000ff;">Note: instead of copy/pasting the server.conf given, copy the one located in /usr/share/doc/openvpn/examples/sample-config-files/server.conf.gz</span>
+
+
+
+<br/><br/><br/>
+<h3>Etherpad-lite</h3>
+Etherpad-lite is a collaborative text editor written in node.js. The installation and configuration is made easy by the usage of a script available on Github <a href="https://github.com/ghoulmann/raspi-etherpad-lite">here</a>.
+<br/>
+The script is called install_raspi_etherpad-lite.sh. I am used to change the port in the file to 8081 so that I keep the 8080 for proxy stuff.
+<br/><br/>
+./install_raspi_etherpad-lite.sh
+<br/><br/>
+Now etherpad should be installed if no errors occurs. Except few things:
+<br/>
+<strong>ln -s /usr/bin/nodejs /usr/bin/node</strong> (cause etherpad intent to launch node while the package install a binary called nodejs)
+<br/>
+Then you can start the application with <strong>/etc/init.d/etherpad-lite start</strong> (The first time you launch it. It can take a while to install all the dependencies and due to the low performance of the Pi)
+
+
+
+<br/><br/><br/>
+<h3>Libreplan</h3>
+Libreplan is a wonderful project management web application. <a title="Libreplan" href="http://www.libreplan.com/" target="_blank">http://www.libreplan.com/</a>
+<br/>
+Libreplan is not available in package repositories but .deb packages are provided on the official website. The only problem is that there is no package for armhf. The application itself is just a tomcat application so there is no reason for it not to work on arm platforms. We will just need to tweak the .deb package to replace the architecture to armhf. The commands to perform are:
+<br/><br/>
+<strong>wget http://sourceforge.net/projects/libreplan/files/LibrePlan/libreplan_1.3.3-1_i386.deb</strong><br/>
+<strong>ar vx libreplan_1.3.3-1_i386.deb</strong><br/>
+<strong>mkdir -p libreplan_1.2.3-1_armhf/DEBIAN</strong><br/>
+<strong>tar -C libreplan_1.2.3-1_armhf/DEBIAN/ -xvf control.tar.gz</strong><br/>
+<strong>tar -C libreplan_1.2.3-1_armhf -xvf data.tar.gz</strong><br/>
+<strong>sed -i &#8216;s/Architecture: .*/Architecture: armhf/&#8217; libreplan_1.2.3-1_armhf/DEBIAN/control</strong><br/>
+<strong>dpkg-deb &#8211;build libreplan_1.2.3-1_armhf/</strong><br/>
+<strong>aptitude install libpg-java postgresql cutycapt postgresql-client xvfb dbconfig-common ucf tomcat6</strong><br/>
+<strong>dpkg -i libreplan_1.2.3-1_armhf.deb</strong>
+<br/><br/>
+To resume what commands does. We first download the i386 version of Libreplan, then we extract the .deb and we recreate the directory structure of the package. We replace the architecture into the file <em>control</em> using <strong>sed</strong> and we rebuild the package with <strong>dpkg-deb</strong>. Then we just have to install the package dependencies and to install our brand new package. And it works ;)
+<br/>
+The server is now listening on the port 8080, and is accessible on http://192.168.0.5:8080/libreplan. Be sure to <span style="text-decoration: underline;">change the admin password</span> and be patient the pi will certainly suffer of the load ^^.
+<br/><br/>
+Note: I prefer launching this kind of service on demand so I remove it from startup with : <strong>update-rc.d tomcat6 remove</strong>
+
+<br/><br/><br/>
+<h3>Codiad IDE</h3>
+Codiad IDE is a web based <a title="Codiad IDE website" href="http://codiad.com/" target="_blank">IDE</a>, which allow to create workspace and support many functionnalities like code coloration etc. It is pretty light and does not require any DB. There is no difficulties in installing Codiad.<br/> The following steps allow to install Codiad:
+<br/><br/>
+<strong>wget https://github.com/Codiad/Codiad/zipball/master</strong><br/>
+<strong>unzip master</strong><br/>
+<strong>cd Codiad-Codiad-961e711/ </strong><span style="color: #3366ff;">#Adapt to the current github commit</span><br/>
+<strong>mkdir /var/www/codiad</strong><br/>
+<strong>cp -r * /var/www/codiad/</strong><br/>
+<strong>mv /var/www/codiad/config.example.php /var/www/codiad/config.php</strong><br/>
+<strong>chmod o+w /var/www/codiad/config.php /var/www/codiad/data/ /var/www/codiad/workspace/</strong>
+<br/><br/>
+Then there is to possibilities, either you modify the config file to modify the root path of codiad either you create a VirtualHost.
+<br/>
+<strong><span style="text-decoration: underline;">1st method</span></strong>:
+<ul>
+	<li><strong>sed -i &#8216;s/^\$rel.*/\$rel = &#34;\/codiad&#34;\;/ /var/wwww/codiad/config.php</strong></li>
+	<li><strong>touch /var/www/codiad/plugins.php</strong></li>
+</ul>
+<strong><span style="text-decoration: underline;">2nd method:</span></strong>
+<ul>
+	<li><strong>touch /var/www/codiad/plugins.php</strong></li>
+	<li><strong>echo &#8220;Listen 8081&#8221; &gt;&gt; /etc/apache2/ports.conf</strong></li>
+	<li><strong>vim &gt; /etc/apache2/sites-available/codiad</strong>
+<pre>
+&lt;VirtualHost *:8081&gt;
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/codiad
+    &lt;Directory /&gt;
+        Options FollowSymLinks
+        AllowOverride None
+    &lt;/Directory&gt;
+    &lt;Directory /var/www/codiad&gt;
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Order allow,deny
+        allow from all
+    &lt;/Directory&gt;
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+&lt;/VirtualHost&gt;
+</pre>
+</li>
+	<li><strong>a2ensite codiad</strong></li>
+	<li><strong>service apache2 reload</strong></li>
+</ul>
+
+
+<br/><br/>
+<h3>OpenMediaVault</h3>
+OpenMediaVault is a NAS that allow to get a good control on the system which allow to transform the pi into a fully featured NAS. There is no package available and the OMV package repository should be added to the sources.list and to add the key of the repository.
+<br/><br/>
+<strong>echo &#8216;deb http://packages.omv-plugins.org fedaykin main&#8217; &gt;/etc/apt/sources.list.d/omv-plugins-org-fedaykin.list</strong><br/>
+<strong>echo &#8216;deb http://packages.omv-plugins.org fedaykin-armhf main&#8217; &gt;/etc/apt/sources.list.d/omv-plugins-org-fedaykin-armhf.list</strong><br/>
+<strong>wget -O - http://packages.omv-plugins.org/apt/99omv-plugins-org &gt; /etc/apt/preferences.d/99omv-plugins-org</strong><br/>
+<strong>wget -O - http://packages.omv-plugins.org/omv-plugins.pub|apt-key add -</strong>
+<br/><br/>
+Then openmediavault can be installed. (If the installation fail due to <strong>tftpd-hpa</strong> change <em>TFTP_OPTIONS</em> to <em>TFTP_OPTIONS=&#8221;&#8211;secure &#8211;ipv4&#8221; in /etc/default/tftpd-hpa</em>)
+<br/>
+<strong>aptitude install openmediavault</strong>
+<br/><br/>
+You can also directly install OMV plugins from aptitude here are the available ones:
+<ul>
+	<li>openmediavault-autoshutdown - OpenMediaVault AutoShutdown</li>
+	<li>openmediavault-clamav - OpenMediaVault ClamAV
+p openmediavault-cups - OpenMediaVault CUPS (network printer server)</li>
+	<li>openmediavault-dnsmasq - OpenMediaVault dnsmasq (local DNS and DHCP server)</li>
+	<li>openmediavault-forkeddaapd - OpenMediaVault forked-daapd (DAAP server)</li>
+	<li>openmediavault-git - OpenMediaVault Git (Git server)</li>
+	<li>openmediavault-iscsitarget - OpenMediaVault iSCSI Enterprise Target</li>
+	<li>openmediavault-ldap - OpenMediaVault Lightweight Directory Access Protocol (LDAP)</li>
+	<li>openmediavault-lvm2 - OpenMediaVault Logical Volume Manager (LVM2)</li>
+	<li>openmediavault-minidlna - OpenMediaVault miniDLNA (DLNA server)</li>
+	<li>openmediavault-mysql - OpenMediaVault MySQL (MySQL database server)</li>
+	<li>openmediavault-netatalk - OpenMediaVault netatalk (AppleTalk Protocol Suite)</li>
+	<li>openmediavault-nut - OpenMediaVault Network UPS Tools (NUT)</li>
+	<li>openmediavault-omvpluginsorg - OMV-Plugins.org Package Repositories for OpenMediaVault</li>
+	<li>openmediavault-openvpn - OpenMediaVault OpenVPN (VPN server) plugin</li>
+	<li>openmediavault-processlist - OpenMediaVault process list panel</li>
+	<li>openmediavault-route - OpenMediaVault IP routing table</li>
+	<li>openmediavault-subversion - OpenMediaVault Subversion (SVN server)</li>
+	<li>openmediavault-transmissionbt - OpenMediaVault Transmission (BitTorrent client)</li>
+	<li>openmediavault-virtualbox - OpenMediaVault VirtualBox</li>
+	<li>openmediavault-website - OpenMediaVault Website plugin</li>
+</ul>
+
+I also like to make it listen on a specific port so I do the following:
+<br/>
+<strong>echo &#8216;Listen 8080&#8217; &gt;&gt; /etc/apache2/ports.conf</strong><br/>
+<strong>sed -i &#8216;s/&lt;VirtualHost \*:80&gt;/&lt;VirtualHost \*:8080&gt;/&#8217; /etc/apache2/sites-available/openmediavault-webgui</strong><br/>
+
+
+
+<br/><br/><br/>
+<h3>Owncloud</h3>
+Owncloud is an amazing private cloud, easy to be set up. The following commands show how to install and configure it with SSL.
+<br/><br/>
+<strong>aptitude install apache2 php5 php5-json php5-gd php5-sqlite curl libcurl3 libcurl4-openssl-dev php5-curl php5-gd php5-cgi php-pear php5-dev build-essential libpcre3-dev libapache2-mod-php5 php-apc</strong>
+<br/><br/>
+<strong>pecl install apc</strong><br/>
+<strong>echo &#8220;apc.enabled=1&#8221; &gt;&gt; /etc/php5/cgi/conf.d/20-apc.ini</strong><br/>
+<strong>echo &#8220;apc.shm_size=30&#8221; &gt;&gt; /etc/php5/cgi/conf.d/20-apc.ini</strong><br/>
+<br/><br/>
+<strong>vim /etc/php5/apache2/php.ini</strong><br/>
+<span style="color: #3366ff;">#Change upload_max_size</span><br/>
+<span style="color: #3366ff;">#Add extension=apc.so</span><br/>
+<br/>
+<strong>a2enmod rewrite</strong><br/>
+<strong>a2enmod headers</strong><br/>
+<br/>
+<strong>openssl genrsa -des3 -out server.key 2048</strong><br/>
+<strong>openssl rsa -in server.key -out server.key.insecure</strong><br/>
+<strong>openssl req -new -key server.key -out server.csr</strong><br/>
+<strong>openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt</strong><br/>
+<strong>cp server.crt /etc/ssl/certs</strong><br/>
+<strong>cp server.key /etc/ssl/private</strong><br/>
+<strong>a2enmod ssl</strong><br/>
+<strong>a2ensite default-ssl</strong><br/>
+<br/>
+<strong>wget http://download.owncloud.org/community/owncloud-5.0.5.tar.bz2</strong><br/>
+<strong>tar xvf owncloud-5.0.5.tar.bz2</strong><br/>
+<strong>cp -r owncloud /var/www/</strong><br/>
+<strong>chown -R www-data:www-data /var/www/owncloud/</strong><br/>
+
+<br/><br/>
+<h2>Useful links</h2>
+<a href="http://www.cl.cam.ac.uk/projects/raspberrypi/tutorials/os/" target="_blank">OS Programming (Cambridge)</a>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Robin David</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-28T00:00:00+00:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/raspberry-pi/'>Raspberry Pi</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/" data-via="" data-counturl="http://www.robindavid.fr/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/10/08/windows-forensic-memo/" title="Previous Post: Windows Forensic Memo">&laquo; Windows Forensic Memo</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+<!--   <a href="http://www.robindavid.fr" title="Robin David"><img id="logo" src="http://www.robindavid.fr/images/" /></a> -->
+  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David"><i class="fa fa-pagelines"></i>Robin David</a></h1>
+  <h3 id="site_subtitle">A site to remotly back up my brain.</h3>
+</section>
+<section>
+<!--   <h1 class="fa fa-pagelines"> Robin David</h1> -->
+  <!-- Picture if needed -->
+
+
+  <div style="text-align:center;" class='contact'>
+	  <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/>
+    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>
+    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>
+    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>
+    <a href='/atom.xml' title='rss'><i class='fa fa-rss fa-2x'></i></a>
+  </div>
+
+</section>
+<section id="menu">
+<ul class="main-navigation" style="font-size:1.5em;font-weight:bold;">
+  <li><a href="/"><i  class="fa fa-home"></i> &nbsp;&nbsp;Home</a></li>
+  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <li><a href="/opencv-tutorial"><i class="fa fa-picture-o"></i> &nbsp;&nbsp;Tuto OpenCV</a></li>
+  <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li>
+  <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li>
+</ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First config and services configuration</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/08/windows-forensic-memo/">Windows Forensic Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/16/wikipedia-frequency-analysis/">Wikipedia frequency analysis</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/useful-basic-function-python-memo/">Basic but useful function python Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage cryptanalysis in Python</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/RobinDavid">@RobinDavid</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'RobinDavid',
+            count: 5,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/autoit/'>AutoIt</a> (1)</li>
+<li class='category'><a href='/blog/categories/bsd/'>BSD</a> (1)</li>
+<li class='category'><a href='/blog/categories/bash/'>Bash</a> (4)</li>
+<li class='category'><a href='/blog/categories/cryptography/'>Cryptography</a> (2)</li>
+<li class='category'><a href='/blog/categories/linux/'>Linux</a> (7)</li>
+<li class='category'><a href='/blog/categories/linux-security/'>Linux Security</a> (3)</li>
+<li class='category'><a href='/blog/categories/memo/'>Memo</a> (3)</li>
+<li class='category'><a href='/blog/categories/network/'>Network</a> (1)</li>
+<li class='category'><a href='/blog/categories/piece-of-code/'>Piece of Code</a> (5)</li>
+<li class='category'><a href='/blog/categories/raspberry-pi/'>Raspberry Pi</a> (1)</li>
+<li class='category'><a href='/blog/categories/windows/'>Windows</a> (1)</li>
+
+  </ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Robin David -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

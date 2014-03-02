@@ -1,0 +1,522 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Chapter 10: Movement detection with background - Robin David</title>
+  <meta name="author" content="Robin David">
+
+  
+  <meta name="description" content="a. The average method I Have created this method taking as a fact that we could compute the number of pixels that have changed between to frames. To &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.robindavid.fr/opencv-tutorial/chapter10-movement-detection-with-background.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Robin David" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-48325647-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.robindavid.fr" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Chapter 10: Movement Detection With Background</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3>a. The average method</h3>
+
+<p>I Have created this method taking as a fact that we could compute the number of pixels that have changed between to frames. To do movement detection the basic idea is to query a frame then query another and compare them two to find the difference. So this method works as follow:</p>
+
+<ol>
+<li>A first frame is taken. All the following frames are compared with the previous one using the <em>Absdiff</em> function</li>
+<li>The result is an image we more the two pixel difference is high more the pixel is white</li>
+<li>Then multiples operations are applied to reduce the noise and refine the moving objects
+
+<ol type="a">
+<li><em>Smooth</em>: Intent to delete the noise in the image</li>
+<li><em>MorphologyEx</em>: <em>OPEN</em> and then <em>CLOSE</em> to get more smooth shapes</li>
+</ol>
+</li>
+<li>To finish a threshold is applied so that we get a nice shapes of moving object in black</li>
+<li>Then to decide either something has moved or not, a threshold is set (by default 5%). So if more than 5% of pixels are black and so have changed a message is triggered</li>
+<li>To calculate the percentage of black pixels we have to iterate the entire matrix, count the number of black pixels and calculate the percentage with the total number of pixels</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">cv2.cv</span> <span class="kn">as</span> <span class="nn">cv</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">capture</span><span class="o">=</span><span class="n">cv</span><span class="o">.</span><span class="n">CaptureFromCAM</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">frame1</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">QueryFrame</span><span class="p">(</span><span class="n">capture</span><span class="p">)</span>
+</span><span class='line'><span class="n">frame1gray</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateMat</span><span class="p">(</span><span class="n">frame1</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">frame1</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_8U</span><span class="p">)</span>
+</span><span class='line'><span class="n">cv</span><span class="o">.</span><span class="n">CvtColor</span><span class="p">(</span><span class="n">frame1</span><span class="p">,</span> <span class="n">frame1gray</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_RGB2GRAY</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">res</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateMat</span><span class="p">(</span><span class="n">frame1</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">frame1</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_8U</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">frame2gray</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateMat</span><span class="p">(</span><span class="n">frame1</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">frame1</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_8U</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">w</span><span class="o">=</span> <span class="n">frame2gray</span><span class="o">.</span><span class="n">width</span>
+</span><span class='line'><span class="n">h</span><span class="o">=</span> <span class="n">frame2gray</span><span class="o">.</span><span class="n">height</span>
+</span><span class='line'><span class="n">nb_pixels</span> <span class="o">=</span> <span class="n">frame2gray</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">frame2gray</span><span class="o">.</span><span class="n">height</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">frame2</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">QueryFrame</span><span class="p">(</span><span class="n">capture</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">CvtColor</span><span class="p">(</span><span class="n">frame2</span><span class="p">,</span> <span class="n">frame2gray</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_RGB2GRAY</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">AbsDiff</span><span class="p">(</span><span class="n">frame1gray</span><span class="p">,</span> <span class="n">frame2gray</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">ShowImage</span><span class="p">(</span><span class="s">&quot;After AbsDiff&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">Smooth</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_BLUR</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">element</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateStructuringElementEx</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span>  <span class="n">cv</span><span class="o">.</span><span class="n">CV_SHAPE_RECT</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">MorphologyEx</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_MOP_OPEN</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">MorphologyEx</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_MOP_CLOSE</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">Threshold</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_THRESH_BINARY_INV</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">ShowImage</span><span class="p">(</span><span class="s">&quot;Image&quot;</span><span class="p">,</span> <span class="n">frame2</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">ShowImage</span><span class="p">(</span><span class="s">&quot;Res&quot;</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#-----------</span>
+</span><span class='line'>    <span class="n">nb</span><span class="o">=</span><span class="mi">0</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+</span><span class='line'>                <span class="n">nb</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="n">avg</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb</span><span class="o">*</span><span class="mf">100.0</span><span class="p">)</span><span class="o">/</span><span class="n">nb_pixels</span>
+</span><span class='line'>    <span class="c">#print &quot;Average: &quot;,avg, &quot;%\r&quot;,</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">avg</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&quot;Something is moving !&quot;</span>
+</span><span class='line'>    <span class="c">#-----------</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">Copy</span><span class="p">(</span><span class="n">frame2gray</span><span class="p">,</span> <span class="n">frame1gray</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">c</span><span class="o">=</span><span class="n">cv</span><span class="o">.</span><span class="n">WaitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">c</span><span class="o">==</span><span class="mi">27</span><span class="p">:</span> <span class="c">#Break if user enters &#39;Esc&#39;.</span>
+</span><span class='line'>        <span class="k">break</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>After Absdiff:</strong></p>
+
+<p><img src="/images/opencv-tutorial/absdiff.png" title="'After Absdiff algorithm'" ></p>
+
+<p><strong>After treatment:</strong></p>
+
+<p><img src="/images/opencv-tutorial/after-treatment.png" title="'After treatment'" ></p>
+
+<h3>b. Adaptative method</h3>
+
+<p>The second method inspired from an OpenCV book is a prety eficient method that learn the background overtime. It means that if an object come in the scene it is firstly considered as a foreground element. And become a background element overtime. Basically background frames are acumulate into an image that constitute the background. The example below use a video as input but you can switch it to your webcam.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">cv2.cv</span> <span class="kn">as</span> <span class="nn">cv</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">capture</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CaptureFromFile</span><span class="p">(</span><span class="s">&#39;img/myvideo.avi&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">nbFrames</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">GetCaptureProperty</span><span class="p">(</span><span class="n">capture</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_CAP_PROP_FRAME_COUNT</span><span class="p">))</span>
+</span><span class='line'><span class="n">fps</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">GetCaptureProperty</span><span class="p">(</span><span class="n">capture</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_CAP_PROP_FPS</span><span class="p">)</span>
+</span><span class='line'><span class="n">wait</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">fps</span> <span class="o">*</span> <span class="mi">1000</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">GetCaptureProperty</span><span class="p">(</span><span class="n">capture</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_CAP_PROP_FRAME_WIDTH</span><span class="p">))</span>
+</span><span class='line'><span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">GetCaptureProperty</span><span class="p">(</span><span class="n">capture</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_CAP_PROP_FRAME_HEIGHT</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">gray</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateImage</span><span class="p">((</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="p">),</span> <span class="n">cv</span><span class="o">.</span><span class="n">IPL_DEPTH_8U</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">background</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateMat</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_32F</span><span class="p">)</span>
+</span><span class='line'><span class="n">backImage</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateImage</span><span class="p">((</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="p">),</span> <span class="n">cv</span><span class="o">.</span><span class="n">IPL_DEPTH_8U</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="n">foreground</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateImage</span><span class="p">((</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="p">),</span> <span class="n">cv</span><span class="o">.</span><span class="n">IPL_DEPTH_8U</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="n">output</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">CreateImage</span><span class="p">((</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="p">),</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">begin</span> <span class="o">=</span> <span class="bp">True</span>
+</span><span class='line'><span class="n">threshold</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span> <span class="n">nbFrames</span> <span class="p">):</span>
+</span><span class='line'>    <span class="n">frame</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">QueryFrame</span><span class="p">(</span> <span class="n">capture</span> <span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">CvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_BGR2GRAY</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">begin</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">cv</span><span class="o">.</span><span class="n">Convert</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="n">background</span><span class="p">)</span> <span class="c">#Convert gray into background format</span>
+</span><span class='line'>        <span class="n">begin</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">Convert</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">backImage</span><span class="p">)</span> <span class="c">#convert existing background to backImage</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">AbsDiff</span><span class="p">(</span><span class="n">backImage</span><span class="p">,</span> <span class="n">gray</span><span class="p">,</span> <span class="n">foreground</span><span class="p">)</span> <span class="c">#Absdiff to get differences</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">Threshold</span><span class="p">(</span><span class="n">foreground</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv</span><span class="o">.</span><span class="n">CV_THRESH_BINARY_INV</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">Acc</span><span class="p">(</span><span class="n">foreground</span><span class="p">,</span> <span class="n">background</span><span class="p">,</span><span class="n">output</span><span class="p">)</span> <span class="c">#Accumulate to background</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">ShowImage</span><span class="p">(</span><span class="s">&quot;Output&quot;</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">cv</span><span class="o">.</span><span class="n">ShowImage</span><span class="p">(</span><span class="s">&quot;Gray&quot;</span><span class="p">,</span> <span class="n">gray</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">c</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">WaitKey</span><span class="p">(</span><span class="n">wait</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">c</span><span class="o">==</span><span class="mi">27</span><span class="p">:</span> <span class="c">#Break if user enters &#39;Esc&#39;.</span>
+</span><span class='line'>        <span class="k">break</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The video used is the same than the previous chapter one (with the small piece of plastic crossing the screen).</p>
+
+<div class="embed-video-container"><iframe src="http://www.youtube.com/embed/MW2zhKt9fuc "></iframe></div>
+
+
+<p><a href="/opencv-tutorial/chapter9-tracking-moving-object.html" title="">&lt;&lt;Tracking Moving Objects</a> | <a href="/opencv-tutorial/" title="">Home</a> | <a href="/opencv-tutorial/official-opencv-python-samples.html" title="">Officials OpenCV Python Samples&gt;&gt;</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Robin David</span></span>
+
+      
+
+
+
+
+
+
+
+
+
+
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/opencv/'>OpenCV</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/opencv-tutorial/chapter10-movement-detection-with-background.html" data-via="" data-counturl="http://www.robindavid.fr/opencv-tutorial/chapter10-movement-detection-with-background.html" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+<!--   <a href="http://www.robindavid.fr" title="Robin David"><img id="logo" src="http://www.robindavid.fr/images/" /></a> -->
+  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David"><i class="fa fa-pagelines"></i>Robin David</a></h1>
+  <h3 id="site_subtitle">A site to remotly back up my brain.</h3>
+</section>
+<section>
+<!--   <h1 class="fa fa-pagelines"> Robin David</h1> -->
+  <!-- Picture if needed -->
+
+
+  <div style="text-align:center;" class='contact'>
+	  <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/>
+    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>
+    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>
+    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>
+    <a href='/atom.xml' title='rss'><i class='fa fa-rss fa-2x'></i></a>
+  </div>
+
+</section>
+<section id="menu">
+<ul class="main-navigation" style="font-size:1.5em;font-weight:bold;">
+  <li><a href="/"><i  class="fa fa-home"></i> &nbsp;&nbsp;Home</a></li>
+  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <li><a href="/opencv-tutorial"><i class="fa fa-picture-o"></i> &nbsp;&nbsp;Tuto OpenCV</a></li>
+  <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li>
+  <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li>
+</ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First config and services configuration</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/08/windows-forensic-memo/">Windows Forensic Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/16/wikipedia-frequency-analysis/">Wikipedia frequency analysis</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/useful-basic-function-python-memo/">Basic but useful function python Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage cryptanalysis in Python</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/RobinDavid">@RobinDavid</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'RobinDavid',
+            count: 5,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/autoit/'>AutoIt</a> (1)</li>
+<li class='category'><a href='/blog/categories/bsd/'>BSD</a> (1)</li>
+<li class='category'><a href='/blog/categories/bash/'>Bash</a> (4)</li>
+<li class='category'><a href='/blog/categories/cryptography/'>Cryptography</a> (2)</li>
+<li class='category'><a href='/blog/categories/linux/'>Linux</a> (7)</li>
+<li class='category'><a href='/blog/categories/linux-security/'>Linux Security</a> (3)</li>
+<li class='category'><a href='/blog/categories/memo/'>Memo</a> (3)</li>
+<li class='category'><a href='/blog/categories/network/'>Network</a> (1)</li>
+<li class='category'><a href='/blog/categories/piece-of-code/'>Piece of Code</a> (5)</li>
+<li class='category'><a href='/blog/categories/raspberry-pi/'>Raspberry Pi</a> (1)</li>
+<li class='category'><a href='/blog/categories/windows/'>Windows</a> (1)</li>
+
+  </ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Robin David -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

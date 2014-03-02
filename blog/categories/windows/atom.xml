@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Windows | Robin David]]></title>
+  <link href="http://www.robindavid.fr/blog/categories/windows/atom.xml" rel="self"/>
+  <link href="http://www.robindavid.fr/"/>
+  <updated>2014-03-02T11:00:09+00:00</updated>
+  <id>http://www.robindavid.fr/</id>
+  <author>
+    <name><![CDATA[Robin David]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Windows Forensic Memo]]></title>
+    <link href="http://www.robindavid.fr/blog/2012/10/08/windows-forensic-memo/"/>
+    <updated>2012-10-08T00:00:00+00:00</updated>
+    <id>http://www.robindavid.fr/blog/2012/10/08/windows-forensic-memo</id>
+    <content type="html"><![CDATA[<h2>I. Volative data acquisition</h2>
+
+
+<h3 style="padding-left: 30px;">1. System date</h3>
+
+
+<p style="padding-left: 60px;"><strong>date /t &amp; time /t</strong><br/>
+<span style="color: #0000ff;">Note: Can also be done in python or perl</span><br/>
+<span style="color: #ff0000;">Be careful: NTFS date use UTC while FAT use local time</span></p>
+
+
+
+
+<h3 style="padding-left: 30px;">2. Connected users</h3>
+
+
+<p style="padding-left: 60px;"><strong>psloggedon</strong> or  <strong>cmd : net sessions</strong> (shows IP)<br/>
+<strong>logonsessions</strong> (shows every users last login date, NTLM, LAN..) or <strong>netusers</strong></p>
+
+
+
+
+<h3 style="padding-left: 30px;">3. Opened files</h3>
+
+
+<p style="padding-left: 60px;"><strong>Cmd : net file</strong> (on the network) / <strong>psfile</strong> (sysinternals)</p>
+
+
+
+
+<h3 style="padding-left: 30px;">4. Network informations</h3>
+
+
+<p style="padding-left: 60px;"><strong>nbtstat –c</strong> shows netbios cache <br/><span style="color: #0000ff;">Note: -A &lt;IP&gt; print the remote host table</span></p>
+
+
+
+
+<h3 style="padding-left: 30px;">5. Network connections</h3>
+
+
+<p style="padding-left: 60px;"><strong>netsat –ano</strong> print port and pid<br/>
+<strong>netstat –r</strong> show the routing table</p>
+
+
+
+
+<h3 style="padding-left: 30px;">6. Process informations</h3>
+
+
+<p style="padding-left: 60px;"><strong>
+Tlist</strong> have the advantage to show the absolute path of a process (now hard to find this utility)<br/>
+<strong>Tasklist – v</strong> gives a lot of informations <br/><strong>tasklist –m wsock32.dll</strong> shows which process have loaded the library <br/><strong>tasklist –svc</strong> shows services informations<br/>
+<strong>Pslist</strong> (sysinternal) gives also a lot informations (maybe my favorite) <br/><strong>–x</strong> shows memory informations and threads <br/><strong>-t</strong> shows the result as pstree under Linux does
+<br/><strong>Listdlls</strong> Print all the dlls loaded by a process <br/><strong>-d wsock32.dll</strong> shows which processes uses the given dll<br/><br/>
+<span style="color: #0000ff;">Note : In the end pslist and listdlls gives the same functionnalities than windows utilities</span>
+<strong>Handle</strong> gives handles on files, ports, registry keys (<strong>-a</strong>) / <strong>-u</strong> for a given owner
+</p>
+
+
+
+
+<h3 style="padding-left: 30px;">7. Process/port correspondence</h3>
+
+
+<p style="padding-left: 60px;"><strong>Netstat –anob</strong> Shows for each port the process name and the pid<br/>
+<strong>Tcpview</strong> (sysinternals) shows everything needed (<strong>–a</strong>) / <strong>-c</strong> produce a csv result
+</p>
+
+
+
+
+<h3 style="padding-left: 30px;">8. Process memory</h3>
+
+
+<p style="padding-left: 60px;"><strong>pmdump</strong> extract the memory of the process pid given in parameter</p>
+
+
+
+
+<h3 style="padding-left: 30px;">9. Network state</h3>
+
+
+<p style="padding-left: 60px;"><strong>Ipconfig /all</strong><br/>
+<strong>Promiscdetect</strong> look for the promiscious mode state for every interface <br/><strong>promqry</strong>  Do basically the same <br/> ndis.pl
+</p>
+
+
+
+
+<h3 style="padding-left: 30px;">10. Clipboard</h3>
+
+
+<p style="padding-left: 60px;"><strong>Pclip</strong> (unxutils) or script perl</p>
+
+
+
+
+<h3 style="padding-left: 30px;">11. Drivers and services informations</h3>
+
+
+<p style="padding-left: 60px;"><strong>svc</strong> (script perl) shows a lot about all services</p>
+
+
+
+
+<h3 style="padding-left: 30px;">12. Command history</h3>
+
+
+<p style="padding-left: 60px;"><strong>Doskey /history</strong> not stored so could by used only if an cmd.exe has been left open</p>
+
+
+
+
+<h3 style="padding-left: 30px;">13. Drives connected</h3>
+
+
+<p style="padding-left: 60px;"><strong>Di</strong> (script perl) shows all connected drives</p>
+
+
+
+
+<h3 style="padding-left: 30px;">14. Shares</h3>
+
+
+<p style="padding-left: 60px;"><strong>Share</strong> (script perl) shows all network shares</p>
+
+
+
+
+<h2>II. Memory analysis</h2>
+
+
+<h3 style="padding-left: 30px;">1. Memory gathering</h3>
+
+
+<p style="padding-left: 60px;">For a process: <strong>volatility memdump –dump-dir test –f D:\myfile.img –p &lt;PID&gt;</strong>
+or lspm.pl</p>
+
+
+<p style="padding-left: 60px;">
+For the whole RAM: <strong>mdd –o dump.dmp</strong> (bugged)<br/>
+or <strong>Win32dd /r /f dump.dmp</strong> (win64dd for x64 systems)<br/>
+Another possibility and my favorite to dump RAM is to use <strong>Memoryze</strong> which is pretty easy and straightforward to use.<br/>
+<span style="color: #0000ff;">Note: In some cases we can force Windows hibernation which have in effect to create an hibernation file and so a memory dump.</span>
+</p>
+
+
+<p style="padding-left: 60px;">
+To get the Windows version from memory dump use <strong>osid.pl &lt;DUMP&gt; </strong>(scripts) or <strong>volatility imageinfo –f &lt;FILE&gt;</strong>
+</p>
+
+
+
+
+<h3 style="padding-left: 30px;">2. Memory dump analysis</h3>
+
+
+<p style="padding-left: 60px;">The best way to analyse memory is to use the <strong>volatility framework</strong> with all the different options.<br/>
+Another possibility is to use <strong>auditviewer combined with memoryze</strong> which are very good and far easier to use than volatility.
+</p>
+
+
+
+
+<h3 style="padding-left: 30px;">3. Extract process image from memory</h3>
+
+
+<p style="padding-left: 60px;">
+<strong>Lspi.pl</strong> allow to extract a process from memory and take in argument process address.<br/>
+<strong>Volatility procdump –f laptop.img –p &lt;PID&gt;</strong> extract process dump from memory.<br/>
+This can be really useful when analyzing a packed or encrypted process which unpack himself in memory. The common utility of dumping process image is to compare it with the original one or a genuine one using fuzzy hashing algorithms.
+<br/><strong>Ssdeep proc.img &gt; proc.img.hash </strong>This hash the process image in a file
+<br/><strong>Ssdeep –v –m proc.img.hash C:\...\proc.exe</strong> this compare the calculated hash with the original executable.
+</p>
+
+
+
+
+<h2>III. Registry analysis</h2>
+
+
+<p style="padding-left: 30px;"><strong>HK_CLASSES_ROOT</strong> -&gt; We not often care about this hive, just contain files associations<br/>
+<strong>HKLM\System</strong> -&gt; <strong>system32\config\System </strong>contains the system configuration<br/>
+<strong>HKLM\SAM</strong> -&gt; <strong>system32\config\Sam </strong>contains the users accounts etc.<br/>
+<strong>HKLM\Security</strong> -&gt; <strong>system32\config\Security </strong>contains security keys and parameters<br/>
+<strong>HKLM\Software</strong> -&gt; <strong>system32\config\Software </strong>Softwares configurations (common for all users)<br/>
+<strong>HKLM\Hardware</strong> -&gt; Volatile, created every boot.<br/>
+<strong>HK_USERS\SID</strong> -&gt; <strong>C:\Users\&lt;NAME&gt;\ </strong>User informations
+</p>
+
+
+<p style="padding-left: 30px;">
+To analyse statically the gathered hives to best tool is <strong>regripper. </strong>RR is the graphical tool and rip is the command line tool (most used). The following sections shows how to extract informations from various hives.
+</p>
+
+
+
+
+<h3 style="padding-left: 30px;">1. Information gathering</h3>
+
+
+<ul style="padding-left: 60px;">
+    <li>Windows version: <strong>rip.pl –p winver –r software</strong></li>
+    <li>Computer name: <strong>rip.pl –p compname -r system</strong> <em>SYSTEM\CurrentControlSet\Control\ComputerName\ActiveComputerName</em></li>
+    <li>Dernier arrêt ordinateur : rip.pl –p shutdown system (SYSTEM\Control00x\Control\Windows)</li>
+    <li>Windows informations (key, owner and more): <strong>rip.pl –p winnt_cv software</strong> <em>SOFTWARE\Microsoft\Windows NT\CurrentVersion</em></li>
+    <li>Timezone and last write: <strong>rip.pl –p timezone system</strong> <em>SYSTEM\CurrentControlSet\Control\TimeZoneInformation</em></li>
+    <li>Network interfaces : <strong>rip.pl –p networkcards software</strong> <em>ControlSet00n\Services\Tcpip\Parameters\Interfaces</em> Note: For Vista use <strong>nic_mst2</strong> to get ip, mask and more</li>
+    <li>MAC address: <strong>rip.pl –p macddr –r software/system</strong> (not always provided)</li>
+    <li>Shares: <strong>rip.pl –p shares –r system</strong> <em>SYSTEM\CurrentControlSet\Services\lanmanserver\parameters</em></li>
+    <li>Get audit policy: <strong>rip.pl –p auditpol –r security</strong></li>
+    <li>Get event logs configuration: <strong>rip.pl –p eventlog –r system</strong></li>
+    <li>SSID wifi : <strong>ripl.pl –p ssid -r software</strong></li>
+    <li>DisableLastAccess: <strong>rip.pl –p disablelastaccess –r system</strong></li>
+    <li>Bitbucket: (software) to get if the trash is active or not</li>
+    <li>USBStor: (system) <strong>usbstor</strong> to get all the usb keys that have been plugged / <strong>devclass</strong> usb keys plugged sorted by last write / <strong>usbstor2</strong> return a result in csv / <strong>port_dev</strong> (software) allow to get informations about portable devices (friendlyname..)</li>
+    <li>mp2: (ntuser) shows association between letters and volumes</li>
+    <li>Users: <strong>rip.pl –p samparse –r SAM</strong></li>
+</ul>
+
+
+
+
+<h3 style="padding-left: 30px;">2. Startup areas in registry</h3>
+
+
+<p style="padding-left: 60px;">Location launched at startup (cha\regref.xls enumerate locations)<br/>
+List startup locations: <strong>rip.pl –p svc –r system </strong><br/><strong>svc2 </strong>more informations and results in csv<br/>
+<span style="color: #0000ff;">Note : On a live system use <strong>regscan</strong></span>
+</p>
+
+
+
+
+<p style="padding-left: 60px;">
+Each time an user log in the host, keys in the following locations are launched:<br/>
+<em>HKLM\Software\Microsoft\Windows\CurrentVersion\Runonce</em> (and Run) (and HKCU)
+</p>
+
+
+<p style="padding-left: 60px;">
+Automatic launch when accessing a specific file type:<br/>
+<em>HKLM\Software\Classes\Exefile\Shell\Open\command</em><br/>
+or <br/><em>HKCR\Exefile\Shell\Open\Command</em><br/>
+<em>HKCR\XXX\shell\open\command</em> (with XXX the filetype)
+</p>
+
+
+<p style="padding-left: 60px;">
+<em>HKLM\Software\Microsoft\Command Processor\AutoRun</em> (when launching cmd.exe so equivalent to bashrc)
+</p>
+
+
+<p style="padding-left: 60px;">
+<strong>Autorun</strong> of sysinternals examine all the automatic startup locations
+</p>
+
+
+
+
+<p style="padding-left: 60px;">
+<em>KLM\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\NoDriveTypeAutoRun</em> define for each drive if the automatic launch with autorun.inf is activated
+<br/><span style="color: #0000ff;">Note: Now it is taken in account only if the key HonorAutorunSetting is set to 0x1 in Policies\Explorer.</span>
+</p>
+
+
+
+
+<h3 style="padding-left: 30px;">3. Track user activities</h3>
+
+
+<p style="padding-left: 60px;"><span style="text-decoration: underline;">Method UserAssist :</span> MRU : Most Recently Used<br/>
+<em>Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist\{GUID}\Count</em><br/>
+<strong>RUNPATH</strong> : Absolut path -&gt; When the user double click in explorer or (Start -&gt; Execute)<br/>
+<strong>RUNCPL</strong> : Configuration panel utility<br/>
+<strong>RUNPIDL</strong> : Pointer in general an .lnk
+</p>
+
+
+
+
+<p style="padding-left: 60px;">
+To get Most Recently Used software: <br/><strong>rip.pl –p userassist –r NTUSER.DAT</strong> (or <strong>userassist2</strong>)
+</p>
+
+
+<p style="padding-left: 60px;">
+<span style="text-decoration: underline;">Method MUICache :</span><br/>
+<em>Software\Microsoft\Windows\ShellNoRoam\MUICache</em><br/>
+To get MUICache: <strong>rip.pl –p muicache –r NTUSER.DAT</strong> (but not date is recorded)
+</p>
+
+
+<p><span style="text-decoration: underline;padding-left: 60px;">Others MRU lists:</span></p>
+
+<ul style="padding-left: 60px;">
+<li>RecentDocs : <strong>rip.pl –p recentdocs –r ntuser.dat</strong></li>
+<li>RunMRU:  <strong>rip.pl –p runmru –r ntuser.dat</strong> text typed in research field in Start menu</li>
+<li>Be careful: The most recent element is the first letter in "MRULIist"</li>
+<li>TypedURLS: <strong>rip.pl –p typedurls –r ntuser.dat</strong> urls typed in IE</li>
+<li>Fileexts: <strong>rip.pl –p fileexts –r ntuse.dat</strong> for default application (even after deletion)</li>
+<li>Acmru: <strong>rip.pl –p acmru – r ntuser.dat</strong> research made in research bar in explorer</li>
+<li>Remote connections : <strong>rip.pl –p mndmru –r ntuser.dat</strong></li>
+<li>Files opened with "Open with" and "Save as": <strong>rip.pl –p comdlg32 –r ntuser.dat</strong></li>
+<li>Windows Media Player files: <strong>rip.pl –p mpmru –r ntuser.dat</strong></li>
+<li>Default user directory: <strong>rip.pl –p shellfolders –r ntuser.dat</strong></li>
+</ul>
+
+
+
+
+<p style="padding-left: 60px;">
+<span style="color: #0000ff;">Note: Ripxp.pl allow to do the same as rip but on XP restoration points.</span><br/>
+<span style="color: #0000ff;">Note: Another trick with registry hives to get deleted keys is to analyse the slack space. The tool regslack.exe (code\jt) with the hive in argument allow to do this.</span>
+</p>
+
+
+
+
+<h2>IV. Files analysis</h2>
+
+
+<h3 style="padding-left: 30px;">1. Event logs files</h3>
+
+
+<p style="padding-left: 60px;">Before doing any log analysis the best idea is to gather the log policy in the hives with regripper and the plugin auditpol (check the command above).</p>
+
+
+
+
+<p style="padding-left: 60px;">
+<strong>Evtstats.pl myfile.evt</strong> allow to get statistics about the given logs like the number of entries etc.<br/>
+<strong>Evtrpt.pl myfile.evt</strong> shows stats differently sorting them by eventid.<br/>
+<strong>Lsevt.pl myfile.evt</strong> shows the logs in a visible manner (<strong>lsevt2</strong> make an csv output)<br/>
+<strong>Evt2xls –e myfile.evt –o output.xls</strong> read the given log and create an excel sheet with all the logs<br/>
+<span style="color: #0000ff;">Note : This works for XP not vista which use a XML formating</span>.
+</p>
+
+
+
+
+<p style="padding-left: 60px;">
+On a live vista <strong>wevtutils el</strong> (shows available logs) and <strong>wevtutil gl &lt;FILE&gt;</strong> print informations about the log file. To parse logs on vista the best tool is<strong> LogParser</strong>.
+</p>
+
+
+<p><span style="text-decoration: underline;padding-left: 60px;">Interesting logs are:</span></p>
+
+<ul style=";padding-left: 60px;">
+<li><strong>IE history</strong>: Local Settings\Temporary Internet Files\Content.IE5</li>
+<li><strong>Setuplog.txt</strong> : Located in the Windows directory. It contains logs about Windows installation date..</li>
+<li><strong>Setupact.log</strong> : Contain logs about gaphical part of the Windows installation.</li>
+<li><strong>Setupapi.log</strong> : Contain logs about devices installations, bugfix, patch etc. (very important)</li>
+<li><strong>Netsetup.log</strong> : Located in Windows\Debug shows workgroup changes on the network</li>
+<li><strong>Schedlgu.txt</strong> : In C:\Windows for &lt;=XP or C:\Windows\Taks for Vista&gt;= and contains history of all tasks executed by at.exe (equivalent to cron)</li>
+<li><strong>Pfirewall.log</strong> : Firewall logs in C:\Windows</li>
+<li><strong>Mrt.log</strong>: Mrt logs. Mrt is the malware detection tool (C:\Windows\Debug)</li>
+<li><strong>Dr. Watson</strong> : Contain logs about software crash (and report send). It is located in C:\Documents and Settings\All Users\Application Data\Microsoft\Dr Watson\drwtsn32.log and the configuration file is in <em>HKLM\SOFTWARE\Microsoft\DrWatson</em>. The file is called user.dmp and keeps pages used by the process when crashing.
+<br/><span style="color: #0000ff;">Note: Only on file is kept so everytime a software crash it replace the file.</span></li>
+<li><strong>Cbs.log</strong>: Windows\Logs\Cbs\cbs.log for Vista and +. It contains package manager logs</li>
+<li><strong>Trash</strong> : recbin.pl (or Rifiuti) followed by the INFO2 file allow to get the list of the deleted files and theirs original location. INFO2 is located in the Recycler directory at the root of every disk and in every UID directory (because every users have a different directory). On vista et + info2 informations are stored in files starting by "$I".</li>
+<li><strong>Rp.log</strong>: located in every restoration point directory.</li>
+</ul>
+
+
+
+
+<h3 style="padding-left: 30px;">2. Other files</h3>
+
+
+<p style="padding-left: 60px;">Prefetch : <em>HKLM\SYSTEM\ControlSet00x\Control\Session Manager\Memory Management\PrefetchParameters</em> define if applications should be prefetched or not</p>
+
+
+<p><p style="padding-left: 60px;">
+Prefetch files are located in C:\Windows\Prefetch.<br/>
+<strong>pref.pl</strong> (ch5\code) and <strong>vista_pref.pl</strong> allows to analyse prefetch files for both XP and Vista.
+<p style="padding-left: 60px;">
+Shortcuts : <strong>lslnk.pl</strong> gives informations about files pointed by the .lnk
+</p>
+<p style="padding-left: 60px;">
+Word documents: Meta datas can be printed thank&rsquo;s to <strong>wmd.pl</strong> (ch5\code) which shows the last authors, language etc. <strong>oledmp.pl</strong> allows to get documents stream objects.
+</p>
+<p style="padding-left: 60px;">
+PDF : <strong>pdfmeta.pl</strong> and or <strong>pdfdmp.pl</strong>
+</p>
+<p style="padding-left: 60px;">
+Meta data of images: <strong>exifer</strong>
+</p>
+<p style="padding-left: 60px;">
+Files signatures : <strong>sigs.pl</strong> checks if the extension is in accordance with the file signature
+</p>
+<p style="padding-left: 60px;">
+Check ADS  !
+</p>
+<p style="padding-left: 60px;">
+A good idea is also to make a virus analysis mounting the drive in read only and also to use <strong>sigcheck</strong> (sysinternal) which look for all unsigned exe located in the given directory (system32).
+</p></p>
+
+<p><h2>V. Executables analysis</h2>
+<h3 style="padding-left: 30px;">1. Static analysis</h3>
+<p style="padding-left: 60px;">For an in-depth analysis of executables the first thing to do is to select some. To filter interesting ones a good idea is to analyse ones that where running when the system shuts down. So it is better to focus of process stored in RAM. We can also analyse unsigned exe located in system32 which are suspect or also exe referenced in an automatic startup location in the registry.
+</p></p>
+
+<p><span style="text-decoration: underline;padding-left: 60px;">Quick procedure :</span>
+<ul style="padding-left: 90px;"></p>
+
+<pre><code>&lt;li&gt;Note the absolute path of the executable.&lt;/li&gt;
+&lt;li&gt;Current OS, version and filesystem&lt;/li&gt;
+&lt;li&gt;Hash of the file&lt;/li&gt;
+&lt;li&gt;Analysis of the hash by virustotal (or another)&lt;/li&gt;
+&lt;li&gt;Use &lt;strong&gt;strings&lt;/strong&gt; to get a brief idea of the content or &lt;strong&gt;bintext &lt;/strong&gt;which is more graphical&lt;/li&gt;
+&lt;li&gt;PE header analysis with tools like &lt;strong&gt;pied&lt;/strong&gt; or &lt;strong&gt;cmd: pedump&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Check the IMPORT table to see all the libraries used by the program (and especially network access dlls)&lt;/li&gt;
+&lt;li&gt;EXPORT table functions that can be used when the exe is used as a library&lt;/li&gt;
+&lt;li&gt;Resources which contains icons, version and other informations. &lt;strong&gt;Fvi.pl&lt;/strong&gt; (ch6) allow to gather all informations of the resource section.&lt;/li&gt;
+</code></pre>
+
+<p></ul></p>
+
+<p><h3 style="padding-left: 30px;">2. Dynamic analysis</h3>
+<p style="padding-left: 60px;">Start the process in a virtual machine and analyse his behavior with tools like <strong>processmonitor</strong>, <strong>regshot</strong> or <strong>sysanalyzer</strong>.</p></p>
+]]></content>
+  </entry>
+  
+</feed>

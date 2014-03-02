@@ -1,0 +1,568 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>pystatgrab Memo - Robin David</title>
+  <meta name="author" content="Robin David">
+
+  
+  <meta name="description" content="Pystatgrab is the python binding for the libstatgrab that allow to get statistical informations about you system like cpu load, filesystem io, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.robindavid.fr/blog/2012/04/23/pystatgrab-memo/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Robin David" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-48325647-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.robindavid.fr" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Pystatgrab Memo</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-23T00:00:00+00:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Pystatgrab is the python binding for the libstatgrab that allow to get statistical informations about you system like cpu load, filesystem io, network io etc..</p>
+
+<p>It works only for linux, that why I recommend you to take a look at <a href="http://code.google.com/p/psutil/">psutil</a> which works on both Linux, Windows and OSX but also provides a lot more functionalities.</p>
+
+<p>Anyway if you are interesed in a small and efficient statistics tools keep reading this article.</p>
+
+<h3>All the available functions are</h3>
+
+<ul>
+<li><strong>sg_get_cpu_percents()</strong> Give information about CPU load in percents</li>
+<li><strong>sg_get_cpu_stats()</strong> Same than cpu_percents but give also the timestamp</li>
+<li><strong>sg_get_cpu_stats_diff()</strong> Return the difference in values with the previous cpu_percents/stats</li>
+<li><strong>sg_get_disk_io_stats()</strong> Give in bytes input ouput of each disks</li>
+<li><strong>sg_get_disk_io_stats_diff()</strong> Give the difference with the previous io_stats</li>
+<li><strong>sg_get_error()</strong></li>
+<li><strong>sg_get_error_arg()</strong></li>
+<li><strong>sg_get_error_errno()</strong></li>
+<li><strong>sg_get_fs_stats()</strong> Return infos about filesystem (bugged), free_blocks, total ..</li>
+<li><strong>sg_get_host_info()</strong> Return basically the same than uname -a</li>
+<li><strong>sg_get_load_stats()</strong> Return the average since 1 minute, 5 minutes and 15 minutes</li>
+<li><strong>sg_get_mem_stats()</strong> Return total, free, cache and used of the RAM</li>
+<li><strong>sg_get_network_iface_stats()</strong> Return network interfaces and theirs status</li>
+<li><strong>sg_get_network_io_stats()</strong> Return input ouput in bytes on each interfaces (and errors..)</li>
+<li><strong>sg_get_network_io_stats_diff()</strong> Return the difference with the last io_stats()</li>
+<li><strong>sg_get_page_stats()</strong></li>
+<li><strong>sg_get_page_stats_diff()</strong></li>
+<li><strong>sg_get_process_count()</strong> Return informations about processes</li>
+<li><strong>sg_get_process_stats()</strong> Return informations about all process</li>
+<li><strong>sg_get_swap_stats()</strong> Same as mem_stats but not with cache</li>
+<li><strong>sg_get_user_stats()</strong></li>
+</ul>
+
+
+<figure class='code'><figcaption><span>Example </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">statgrab</span> <span class="kn">as</span> <span class="nn">stg</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="ow">not</span> <span class="n">stg</span><span class="o">.</span><span class="n">sg_init</span><span class="p">():</span> <span class="c">#Initialise the monitor. You could not call any function if you didn&#39;t initialized monitoring.</span>
+</span><span class='line'>  <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">res</span> <span class="o">=</span> <span class="n">stg</span><span class="o">.</span><span class="n">sg_get_cpu_percents</span><span class="p">()</span>
+</span><span class='line'><span class="c"># !! The problem with the module is that the object returned is a Result class so there is two solution to exploit results:</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#----- First Solution -----</span>
+</span><span class='line'><span class="c">#you loop trough items knowing in advance all the keys. ex:</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;kernel&#39;</span><span class="p">,</span><span class="s">&#39;iowait&#39;</span><span class="p">,</span><span class="s">&#39;idle&#39;</span><span class="p">,</span><span class="s">&#39;swap&#39;</span><span class="p">,</span><span class="s">&#39;nice&#39;</span><span class="p">,</span><span class="s">&#39;user&#39;</span><span class="p">):</span> <span class="c">#time_taken ..</span>
+</span><span class='line'>  <span class="k">print</span> <span class="n">k</span><span class="p">,</span><span class="s">&quot;: &quot;</span><span class="p">,</span><span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="s">&quot;%&quot;</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">kernel :  0.531929373741 %</span>
+</span><span class='line'><span class="sd">iowait :  0.00408129952848 %</span>
+</span><span class='line'><span class="sd">idle :  97.5757064819 %</span>
+</span><span class='line'><span class="sd">swap :  0.0 %</span>
+</span><span class='line'><span class="sd">nice :  0.0 %</span>
+</span><span class='line'><span class="sd">user :  1.8923625946 %</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="c">#-----------------------------</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#----- 2nd Solution ------</span>
+</span><span class='line'><span class="c">#you can convert Result class to dictionnary</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">ast</span>
+</span><span class='line'><span class="n">dic</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dic</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span class='line'>  <span class="k">print</span> <span class="n">k</span><span class="p">,</span><span class="s">&quot;: &quot;</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="s">&quot;%&quot;</span>
+</span><span class='line'><span class="c">#--------------------------</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#sg_get_disk_io_stats()</span>
+</span><span class='line'><span class="k">for</span> <span class="n">disk</span> <span class="ow">in</span> <span class="n">stg</span><span class="o">.</span><span class="n">sg_get_disk_io_stats</span><span class="p">():</span>
+</span><span class='line'>  <span class="k">print</span> <span class="n">disk</span><span class="p">[</span><span class="s">&#39;disk_name&#39;</span><span class="p">],</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">Read: &quot;</span><span class="p">,</span><span class="n">disk</span><span class="p">[</span><span class="s">&#39;read_bytes&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span><span class="s">&quot;KB</span><span class="se">\t\t</span><span class="s">Write: &quot;</span><span class="p">,</span><span class="n">disk</span><span class="p">[</span><span class="s">&#39;write_bytes&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span><span class="s">&quot;KB&quot;</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">sda  Read:  814150 KB        Write:  1347350 KB</span>
+</span><span class='line'><span class="sd">sdb  Read:  11636 KB     Write:  0 KB</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#sg_get_host_info()</span>
+</span><span class='line'><span class="n">res</span> <span class="o">=</span> <span class="n">stg</span><span class="o">.</span><span class="n">sg_get_host_info</span><span class="p">()</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="p">))</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span class='line'>  <span class="k">print</span> <span class="n">k</span><span class="p">,</span><span class="s">&quot;: &quot;</span><span class="p">,</span><span class="n">v</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">uptime :  11135</span>
+</span><span class='line'><span class="sd">os_name :  Linux</span>
+</span><span class='line'><span class="sd">os_version :  #1 SMP Fri Apr 6 05:01:55 UTC 2012</span>
+</span><span class='line'><span class="sd">hostname :  PC</span>
+</span><span class='line'><span class="sd">platform :  x86_64</span>
+</span><span class='line'><span class="sd">os_release :  3.1.0-2-amd64</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#sg_get_mem_stats()</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;Memory (RAM)&quot;</span>
+</span><span class='line'><span class="n">res</span> <span class="o">=</span> <span class="n">stg</span><span class="o">.</span><span class="n">sg_get_mem_stats</span><span class="p">()</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="p">))</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span class='line'>  <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">/</span> <span class="mi">1000000</span><span class="p">,</span><span class="s">&quot;MB&quot;</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">total 8372 MB</span>
+</span><span class='line'><span class="sd">cache 1769 MB</span>
+</span><span class='line'><span class="sd">used 4549 MB</span>
+</span><span class='line'><span class="sd">free 3822 MB</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="c">#This is exactly the same with sg_get_swap_stats() but not with cache attribute</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#sg_get_network_iface_stats()</span>
+</span><span class='line'><span class="k">for</span> <span class="n">iface</span> <span class="ow">in</span> <span class="n">stg</span><span class="o">.</span><span class="n">sg_get_network_iface_stats</span><span class="p">():</span>
+</span><span class='line'>  <span class="k">print</span> <span class="n">iface</span><span class="p">[</span><span class="s">&#39;interface_name&#39;</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="p">,</span> <span class="s">&quot;up&quot;</span> <span class="k">if</span> <span class="n">iface</span><span class="p">[</span><span class="s">&quot;up&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&quot;down&quot;</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">lo: up</span>
+</span><span class='line'><span class="sd">wlan0: up</span>
+</span><span class='line'><span class="sd">eth0: up</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#sg_get_network_io_stats()</span>
+</span><span class='line'><span class="k">for</span> <span class="n">iface</span> <span class="ow">in</span> <span class="n">stg</span><span class="o">.</span><span class="n">sg_get_network_io_stats</span><span class="p">():</span>
+</span><span class='line'>  <span class="k">print</span> <span class="n">iface</span><span class="p">[</span><span class="s">&#39;interface_name&#39;</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;: Input:&quot;</span><span class="p">,</span><span class="n">iface</span><span class="p">[</span><span class="s">&#39;ipackets&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span><span class="s">&#39;Kb</span><span class="se">\t</span><span class="s">Output:&#39;</span><span class="p">,</span><span class="n">iface</span><span class="p">[</span><span class="s">&#39;opackets&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span><span class="s">&quot;Kb&quot;</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">lo: Input: 0 Kb  Output: 0 Kb</span>
+</span><span class='line'><span class="sd">wlan0: Input: 794 Kb Output: 554 Kb</span>
+</span><span class='line'><span class="sd">eth0: Input: 0 Kb    Output: 0 Kb</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#sg_get_process_count()</span>
+</span><span class='line'><span class="n">res</span> <span class="o">=</span> <span class="n">stg</span><span class="o">.</span><span class="n">sg_get_process_count</span><span class="p">()</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="p">))</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span class='line'>  <span class="k">print</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">zombie 0</span>
+</span><span class='line'><span class="sd">running 2</span>
+</span><span class='line'><span class="sd">total 175</span>
+</span><span class='line'><span class="sd">stopped 1</span>
+</span><span class='line'><span class="sd">sleeping 172</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#sg_get_process_stats()</span>
+</span><span class='line'><span class="n">res</span> <span class="o">=</span> <span class="n">stg</span><span class="o">.</span><span class="n">sg_get_process_stats</span><span class="p">()</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;Number Processes:&quot;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;CPU</span><span class="se">\t</span><span class="s">UID</span><span class="se">\t</span><span class="s">GID</span><span class="se">\t</span><span class="s">PID</span><span class="se">\t</span><span class="s">Name&quot;</span>
+</span><span class='line'><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+</span><span class='line'>  <span class="k">print</span> <span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s">&#39;cpu_percent&#39;</span><span class="p">],</span><span class="mi">2</span><span class="p">),</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span><span class="n">p</span><span class="p">[</span><span class="s">&#39;uid&#39;</span><span class="p">],</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span><span class="n">p</span><span class="p">[</span><span class="s">&#39;gid&#39;</span><span class="p">],</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span><span class="n">p</span><span class="p">[</span><span class="s">&#39;pid&#39;</span><span class="p">],</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span><span class="n">p</span><span class="p">[</span><span class="s">&#39;process_name&#39;</span><span class="p">]</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="sd">CPU  UID     GID PID Name </span>
+</span><span class='line'><span class="sd">0.01     0   0   1   init</span>
+</span><span class='line'><span class="sd">0.0  0   0   2   kthreadd</span>
+</span><span class='line'><span class="sd">0.0  0   0   3   ksoftirqd/0</span>
+</span><span class='line'><span class="sd">0.0  0   0   6   migration/0</span>
+</span><span class='line'><span class="sd">0.0  0   0   7   watchdog/0</span>
+</span><span class='line'><span class="sd">0.0  0   0   8   migration/1</span>
+</span><span class='line'><span class="sd">...</span>
+</span><span class='line'><span class="sd">&#39;&#39;&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Robin David</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-23T00:00:00+00:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/memo/'>Memo</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/blog/2012/04/23/pystatgrab-memo/" data-via="" data-counturl="http://www.robindavid.fr/blog/2012/04/23/pystatgrab-memo/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/04/23/pydmtx-memo/" title="Previous Post: pydmtx Memo">&laquo; pydmtx Memo</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/" title="Next Post: Kasiski-Babbage cryptanalysis in Python">Kasiski-Babbage cryptanalysis in Python &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+<!--   <a href="http://www.robindavid.fr" title="Robin David"><img id="logo" src="http://www.robindavid.fr/images/" /></a> -->
+  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David"><i class="fa fa-pagelines"></i>Robin David</a></h1>
+  <h3 id="site_subtitle">A site to remotly back up my brain.</h3>
+</section>
+<section>
+<!--   <h1 class="fa fa-pagelines"> Robin David</h1> -->
+  <!-- Picture if needed -->
+
+
+  <div style="text-align:center;" class='contact'>
+	  <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/>
+    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>
+    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>
+    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>
+    <a href='/atom.xml' title='rss'><i class='fa fa-rss fa-2x'></i></a>
+  </div>
+
+</section>
+<section id="menu">
+<ul class="main-navigation" style="font-size:1.5em;font-weight:bold;">
+  <li><a href="/"><i  class="fa fa-home"></i> &nbsp;&nbsp;Home</a></li>
+  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <li><a href="/opencv-tutorial"><i class="fa fa-picture-o"></i> &nbsp;&nbsp;Tuto OpenCV</a></li>
+  <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li>
+  <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li>
+</ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First config and services configuration</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/08/windows-forensic-memo/">Windows Forensic Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/16/wikipedia-frequency-analysis/">Wikipedia frequency analysis</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/useful-basic-function-python-memo/">Basic but useful function python Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage cryptanalysis in Python</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/RobinDavid">@RobinDavid</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'RobinDavid',
+            count: 5,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/autoit/'>AutoIt</a> (1)</li>
+<li class='category'><a href='/blog/categories/bsd/'>BSD</a> (1)</li>
+<li class='category'><a href='/blog/categories/bash/'>Bash</a> (4)</li>
+<li class='category'><a href='/blog/categories/cryptography/'>Cryptography</a> (2)</li>
+<li class='category'><a href='/blog/categories/linux/'>Linux</a> (7)</li>
+<li class='category'><a href='/blog/categories/linux-security/'>Linux Security</a> (3)</li>
+<li class='category'><a href='/blog/categories/memo/'>Memo</a> (3)</li>
+<li class='category'><a href='/blog/categories/network/'>Network</a> (1)</li>
+<li class='category'><a href='/blog/categories/piece-of-code/'>Piece of Code</a> (5)</li>
+<li class='category'><a href='/blog/categories/raspberry-pi/'>Raspberry Pi</a> (1)</li>
+<li class='category'><a href='/blog/categories/windows/'>Windows</a> (1)</li>
+
+  </ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Robin David -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

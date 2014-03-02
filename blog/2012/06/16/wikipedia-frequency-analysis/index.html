@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Wikipedia frequency analysis - Robin David</title>
+  <meta name="author" content="Robin David">
+
+  
+  <meta name="description" content="Introduction The wish to do a frequency analysis of wikipedia came from the lack of a good frequency table for french character that included every &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.robindavid.fr/blog/2012/06/16/wikipedia-frequency-analysis/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Robin David" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-48325647-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.robindavid.fr" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Wikipedia Frequency Analysis</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-16T00:00:00+00:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Introduction</h2>
+
+<p>The wish to do a frequency analysis of wikipedia came from the lack of a good frequency table for french character that included every characters(space, tab, LF etc).
+In order to do it I needed a strong base, and I knew it was possible to download the entire content of Wikipedia that&rsquo;s why I have decided to take it as basis.</p>
+
+<p>Dumps can be downloaded on <a href="http://dumps.wikimedia.org/frwiki/latest/">wikimedia</a>. The one I took for this test is the release of the 18th of February 2012 and weigh uncompressed 12.5 GB.</p>
+
+<p>The code used is quite simple, the only thing I had to deal with was the xml and the wiki syntax. Indeed I wanted only articles content and not all xml tags which would have disguised results.</p>
+
+<p>Thats why I filtered only the text contained into &#8217;&lt;text xml:space=&ldquo;preserve&rdquo;&gt;&lsquo; and &rsquo;&lt;/text&gt;&lsquo; which are the two markers for the begin and the end of an article. Moreover within an article I do some clean up that&rsquo;s why I remove all Wiki syntax tags(in a dirty way) otherwise it would also disguise results (and &rsquo;[&lsquo; would be for instance well ranked whereas it should not).</p>
+
+<p><em>Note: I have written this script in python 3 that support unicode crucial here.</em></p>
+
+<h2>Script</h2>
+
+<figure class='code'><figcaption><span>Frequency analysis script</span><a href='https://github.com/RobinDavid/Python-programs/blob/master/wikipedia_frequency_analysis/wiki-analysis.py'>link</a></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/python3.2</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">re</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">time</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#---------- GLOBAL VARS -------</span>
+</span><span class='line'><span class="n">lines</span><span class="o">=</span><span class="mi">0</span>
+</span><span class='line'><span class="n">articles</span><span class="o">=</span><span class="mi">0</span>
+</span><span class='line'><span class="c">#characters=0</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s">&quot;r&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">article</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">begin_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;&lt;text xml:space=&quot;preserve&quot;&gt;&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">end_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;&lt;/text&gt;&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">within_article</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'><span class="n">dictionnary</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">left_brackets</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&quot;\[\[&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">right_brackets</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&quot;\]\]&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">colon_brackets</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&quot;\[\[\S*:.*\]\]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">curly_brackets</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&quot;\{\{.*\}\}</span><span class="se">\n</span><span class="s">?&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="c">#------------------------------</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">print_temp_stats</span><span class="p">():</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Lines: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span><span class="n">end</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">clean_line</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+</span><span class='line'>  <span class="n">line</span> <span class="o">=</span> <span class="n">l</span>
+</span><span class='line'>  <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">colon_brackets</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">line</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">left_brackets</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">line</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">right_brackets</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">line</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">curly_brackets</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">line</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">line</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">processArticle</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+</span><span class='line'>  <span class="c">#global characters</span>
+</span><span class='line'>  <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">dictionnary</span><span class="p">[</span><span class="n">elt</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c">#Faster in execution than doing if dictionnary.get(elt) because triggered once for each new characters but after far faster..</span>
+</span><span class='line'>      <span class="n">dictionnary</span><span class="p">[</span><span class="n">elt</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">write_final</span><span class="p">():</span>
+</span><span class='line'>  <span class="k">print</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;RESULT-&quot;</span><span class="o">+</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;.txt&quot;</span>
+</span><span class='line'>  <span class="n">fout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="s">&quot;w&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">l</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dictionnary</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">for</span> <span class="n">elt</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">e</span> <span class="o">=</span> <span class="n">elt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">e</span> <span class="o">==</span> <span class="s">&quot; &quot;</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">e</span> <span class="o">=</span> <span class="s">&quot;[SPACE]&quot;</span>
+</span><span class='line'>    <span class="k">elif</span> <span class="n">e</span> <span class="o">==</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">e</span> <span class="o">=</span> <span class="s">&quot;[LF]&quot;</span>
+</span><span class='line'>    <span class="k">elif</span> <span class="n">e</span> <span class="o">==</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">e</span> <span class="o">=</span> <span class="s">&quot;[HTAB]&quot;</span>
+</span><span class='line'>    <span class="k">elif</span> <span class="n">e</span> <span class="o">==</span> <span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">e</span> <span class="o">=</span> <span class="s">&quot;[CR]&quot;</span>
+</span><span class='line'>    <span class="n">s</span> <span class="o">=</span> <span class="n">e</span> <span class="o">+</span> <span class="s">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">elt</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</span><span class='line'>    <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">fout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class='line'>  <span class="k">print</span><span class="p">(</span><span class="s">&quot;Results in: &quot;</span><span class="o">+</span><span class="n">name</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">print_final_stats</span><span class="p">():</span>
+</span><span class='line'>  <span class="n">chars</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dictionnary</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">chars</span> <span class="o">+=</span> <span class="n">v</span>
+</span><span class='line'>  <span class="k">print</span><span class="p">(</span><span class="s">&quot;Articles: &quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">articles</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">Lines: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">Number characters: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">Different characters: &quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dictionnary</span><span class="p">)))</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Usage: wiki-analysis.py wikipedia-filename&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">tdeb</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+</span><span class='line'>      <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+</span><span class='line'>          <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">lines</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">if</span> <span class="ow">not</span> <span class="n">within_article</span><span class="p">:</span>
+</span><span class='line'>          <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">begin_text</span><span class="p">,</span><span class="n">line</span><span class="p">):</span>
+</span><span class='line'>              <span class="n">within_article</span> <span class="o">=</span> <span class="bp">True</span>
+</span><span class='line'>              <span class="n">articles</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>              <span class="n">article</span> <span class="o">+=</span> <span class="n">clean_line</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">begin_text</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">line</span><span class="p">))</span>
+</span><span class='line'>      <span class="k">else</span><span class="p">:</span> <span class="c">#already in an article</span>
+</span><span class='line'>          <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">end_text</span><span class="p">,</span><span class="n">line</span><span class="p">):</span>
+</span><span class='line'>              <span class="n">within_article</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'>              <span class="n">processArticle</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+</span><span class='line'>              <span class="n">article</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+</span><span class='line'>          <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>              <span class="n">article</span> <span class="o">+=</span> <span class="n">clean_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">print_temp_stats</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">tfin</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Execution time: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tfin</span><span class="o">-</span><span class="n">tdeb</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; secondes&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">print_final_stats</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">write_final</span><span class="p">()</span>
+</span><span class='line'>  <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Results</h2>
+
+<p>The execution of my script took aproximately 3 hours and the output is:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">bash</span><span class="err">$</span> <span class="o">./</span><span class="n">wiki</span><span class="o">-</span><span class="n">analysis</span><span class="o">.</span><span class="n">py</span> <span class="n">frwiki</span><span class="o">-</span><span class="n">latest</span><span class="o">-</span><span class="n">pages</span><span class="o">-</span><span class="n">meta</span><span class="o">-</span><span class="n">current</span><span class="o">.</span><span class="n">xml</span>
+</span><span class='line'><span class="n">Lines</span><span class="p">:</span> <span class="mi">222669441</span>
+</span><span class='line'><span class="n">Execution</span> <span class="n">time</span><span class="p">:</span> <span class="mf">10033.887793064117</span> <span class="n">secondes</span>
+</span><span class='line'><span class="n">Articles</span><span class="p">:</span> <span class="mi">3714740</span>       <span class="n">Lines</span><span class="p">:</span> <span class="mi">222669441</span>        <span class="n">Number</span> <span class="n">characters</span><span class="p">:</span> <span class="mi">9217905119</span>   <span class="n">Different</span> <span class="n">characters</span><span class="p">:</span> <span class="mi">27605</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Results</span> <span class="ow">in</span><span class="p">:</span> <span class="n">RESULT</span><span class="o">-</span><span class="n">frwiki</span><span class="o">-</span><span class="n">latest</span><span class="o">-</span><span class="n">pages</span><span class="o">-</span><span class="n">meta</span><span class="o">-</span><span class="n">current</span><span class="o">.</span><span class="n">xml</span><span class="o">.</span><span class="n">txt</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can download the output file with the complete table <a href="https://github.com/RobinDavid/Python-programs/blob/master/wikipedia_frequency_analysis/RESULT-frwiki-latest-pages-meta-current.xml.txt">here</a>.</p>
+
+<p><strong>As we could have supposed the space comes in first position with 1329412224 times, followed by &ldquo;e&rdquo; and &ldquo;t&rdquo;. The LF comes in 16th position. As we can see it took almost 3 hours which is quite long for data process (even though it is 12 GB).</strong></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Robin David</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-16T00:00:00+00:00" pubdate data-updated="true"></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/piece-of-code/'>Piece of Code</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/blog/2012/06/16/wikipedia-frequency-analysis/" data-via="" data-counturl="http://www.robindavid.fr/blog/2012/06/16/wikipedia-frequency-analysis/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/06/15/useful-basic-function-python-memo/" title="Previous Post: Basic but useful function python Memo">&laquo; Basic but useful function python Memo</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/10/08/windows-forensic-memo/" title="Next Post: Windows Forensic Memo">Windows Forensic Memo &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+<!--   <a href="http://www.robindavid.fr" title="Robin David"><img id="logo" src="http://www.robindavid.fr/images/" /></a> -->
+  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David"><i class="fa fa-pagelines"></i>Robin David</a></h1>
+  <h3 id="site_subtitle">A site to remotly back up my brain.</h3>
+</section>
+<section>
+<!--   <h1 class="fa fa-pagelines"> Robin David</h1> -->
+  <!-- Picture if needed -->
+
+
+  <div style="text-align:center;" class='contact'>
+	  <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/>
+    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>
+    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>
+    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>
+    <a href='/atom.xml' title='rss'><i class='fa fa-rss fa-2x'></i></a>
+  </div>
+
+</section>
+<section id="menu">
+<ul class="main-navigation" style="font-size:1.5em;font-weight:bold;">
+  <li><a href="/"><i  class="fa fa-home"></i> &nbsp;&nbsp;Home</a></li>
+  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <li><a href="/opencv-tutorial"><i class="fa fa-picture-o"></i> &nbsp;&nbsp;Tuto OpenCV</a></li>
+  <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li>
+  <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li>
+</ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First config and services configuration</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/08/windows-forensic-memo/">Windows Forensic Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/16/wikipedia-frequency-analysis/">Wikipedia frequency analysis</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/useful-basic-function-python-memo/">Basic but useful function python Memo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage cryptanalysis in Python</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/RobinDavid">@RobinDavid</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'RobinDavid',
+            count: 5,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li class='category'><a href='/blog/categories/autoit/'>AutoIt</a> (1)</li>
+<li class='category'><a href='/blog/categories/bsd/'>BSD</a> (1)</li>
+<li class='category'><a href='/blog/categories/bash/'>Bash</a> (4)</li>
+<li class='category'><a href='/blog/categories/cryptography/'>Cryptography</a> (2)</li>
+<li class='category'><a href='/blog/categories/linux/'>Linux</a> (7)</li>
+<li class='category'><a href='/blog/categories/linux-security/'>Linux Security</a> (3)</li>
+<li class='category'><a href='/blog/categories/memo/'>Memo</a> (3)</li>
+<li class='category'><a href='/blog/categories/network/'>Network</a> (1)</li>
+<li class='category'><a href='/blog/categories/piece-of-code/'>Piece of Code</a> (5)</li>
+<li class='category'><a href='/blog/categories/raspberry-pi/'>Raspberry Pi</a> (1)</li>
+<li class='category'><a href='/blog/categories/windows/'>Windows</a> (1)</li>
+
+  </ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Robin David -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
