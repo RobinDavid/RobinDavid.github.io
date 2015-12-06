@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Raspberry Pi: First config and services configuration - Robin David</title>
+  <title>Raspberry Pi: First Config and Services Configuration - Robin David</title>
   <meta name="author" content="Robin David">
 
   
-  <meta name="description" content="What is the Raspberry Pi ? I think there&#8217;s no need to present the Pi anymore. This is basically a whole computer embed on chip based on ARM. It &hellip;">
+  <meta name="description" content="What is the Raspberry Pi ? I think there's no need to present the Pi anymore. This is basically a whole computer embed on chip based on ARM. It has &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,18 +21,35 @@
   <link rel="canonical" href="http://www.robindavid.fr/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
   <link href="/atom.xml" rel="alternate" title="Robin David" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
 
 <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
 
+<link href='/stylesheets/custom/bootstrap_fragment.css' rel='stylesheet' type='text/css'>
+<!-- <link href='stylesheets/custom/bootstrap/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='stylesheets/custom/bootstrap/responsive.css' rel='stylesheet' type='text/css'> -->
+<style>html{
+	background: url("/images/background.png") no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;}
+	#site_title { padding: 5%;}
+  .mobile-nav { display:none; }
+  hr.myhr {
+    border: 1px dotted #585858;
+    border-style: none none dotted; 
+}
+  a { text-decoration: none;}
+</style>
 
 
 
@@ -50,7 +67,6 @@
   </script>
 
 
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
 </head>
 
 <body   >
@@ -65,7 +81,7 @@
   
 <form action="http://google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:www.robindavid.fr" />
+    <input type="hidden" name="sitesearch" value="www.robindavid.fr">
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -92,14 +108,7 @@
 
 
 
-
-
-
-
-  
-
-
-<time datetime="2013-01-28T00:00:00+00:00" pubdate data-updated="true"></time>
+<time class='entry-date' datetime='2013-01-28T00:00:00+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>12:00 am</span></time>
         
       </p>
     
@@ -107,7 +116,7 @@
 
 
 <div class="entry-content"><h2>What is the Raspberry Pi ?</h2>
-I think there&#8217;s no need to present the Pi anymore. This is basically a whole computer embed on chip based on ARM. It has been designed by David Braben. The official site is the following: <a href="http://www.raspberrypi.org/">http://www.raspberrypi.org/</a>
+I think there's no need to present the Pi anymore. This is basically a whole computer embed on chip based on ARM. It has been designed by David Braben. The official site is the following: <a href="http://www.raspberrypi.org/">http://www.raspberrypi.org/</a>
 <br/>
 <h2>Initial configuration</h2>
 Here is a small memo of the things I do when I configure a Pi for the first time.
@@ -144,7 +153,7 @@ Remove pi from sudoers<br/>
 #To enlarge the filesystem, disable X, and change timezone<br/><br/>
 
 The default package repository (mirrordirector.raspbian.org) is not really reliable, and an update should sometimes in my case be relaunch few times to get through. So I use another package repository:
-<br/><strong>echo &#8216;deb http://mirrors.ircam.fr/pub/raspbian/raspbian/ wheezy main contrib non-free rpi&#8217; &gt; /etc/apt/sources.list</strong><br/>
+<br/><strong>echo 'deb http://mirrors.ircam.fr/pub/raspbian/raspbian/ wheezy main contrib non-free rpi' &gt; /etc/apt/sources.list</strong><br/>
 
 <h3>SSH Key exchange</h3>
 For more simplicity I have put the public key of my main computer in the ssh authorized hosts of the pi to login automatically, here are the few steps to do.
@@ -153,7 +162,7 @@ On the local host:
 <ul>
 	<li><strong>ssh-keygen -t rsa</strong></li>
 	<li><strong>scp .ssh/id_rsa.pub pi@192.168.0.5:~/</strong></li>
-	<li><strong>echo &#8216;alias copi=&#8221;ssh pi@192.168.0.5 -X&#8221; &#8217; &gt;&gt; ~/.bashrc</strong></li>
+	<li><strong>echo 'alias copi="ssh pi@192.168.0.5 -X" ' &gt;&gt; ~/.bashrc</strong></li>
 </ul>
 On the pi:
 <ul>
@@ -198,8 +207,8 @@ Libreplan is not available in package repositories but .deb packages are provide
 <strong>mkdir -p libreplan_1.2.3-1_armhf/DEBIAN</strong><br/>
 <strong>tar -C libreplan_1.2.3-1_armhf/DEBIAN/ -xvf control.tar.gz</strong><br/>
 <strong>tar -C libreplan_1.2.3-1_armhf -xvf data.tar.gz</strong><br/>
-<strong>sed -i &#8216;s/Architecture: .*/Architecture: armhf/&#8217; libreplan_1.2.3-1_armhf/DEBIAN/control</strong><br/>
-<strong>dpkg-deb &#8211;build libreplan_1.2.3-1_armhf/</strong><br/>
+<strong>sed -i 's/Architecture: .*/Architecture: armhf/' libreplan_1.2.3-1_armhf/DEBIAN/control</strong><br/>
+<strong>dpkg-deb --build libreplan_1.2.3-1_armhf/</strong><br/>
 <strong>aptitude install libpg-java postgresql cutycapt postgresql-client xvfb dbconfig-common ucf tomcat6</strong><br/>
 <strong>dpkg -i libreplan_1.2.3-1_armhf.deb</strong>
 <br/><br/>
@@ -225,13 +234,13 @@ Then there is to possibilities, either you modify the config file to modify the 
 <br/>
 <strong><span style="text-decoration: underline;">1st method</span></strong>:
 <ul>
-	<li><strong>sed -i &#8216;s/^\$rel.*/\$rel = &#34;\/codiad&#34;\;/ /var/wwww/codiad/config.php</strong></li>
+	<li><strong>sed -i 's/^\$rel.*/\$rel = \"\/codiad\"\;/ /var/wwww/codiad/config.php</strong></li>
 	<li><strong>touch /var/www/codiad/plugins.php</strong></li>
 </ul>
 <strong><span style="text-decoration: underline;">2nd method:</span></strong>
 <ul>
 	<li><strong>touch /var/www/codiad/plugins.php</strong></li>
-	<li><strong>echo &#8220;Listen 8081&#8221; &gt;&gt; /etc/apache2/ports.conf</strong></li>
+	<li><strong>echo "Listen 8081" &gt;&gt; /etc/apache2/ports.conf</strong></li>
 	<li><strong>vim &gt; /etc/apache2/sites-available/codiad</strong>
 <pre>
 &lt;VirtualHost *:8081&gt;
@@ -261,12 +270,12 @@ Then there is to possibilities, either you modify the config file to modify the 
 <h3>OpenMediaVault</h3>
 OpenMediaVault is a NAS that allow to get a good control on the system which allow to transform the pi into a fully featured NAS. There is no package available and the OMV package repository should be added to the sources.list and to add the key of the repository.
 <br/><br/>
-<strong>echo &#8216;deb http://packages.omv-plugins.org fedaykin main&#8217; &gt;/etc/apt/sources.list.d/omv-plugins-org-fedaykin.list</strong><br/>
-<strong>echo &#8216;deb http://packages.omv-plugins.org fedaykin-armhf main&#8217; &gt;/etc/apt/sources.list.d/omv-plugins-org-fedaykin-armhf.list</strong><br/>
+<strong>echo 'deb http://packages.omv-plugins.org fedaykin main' &gt;/etc/apt/sources.list.d/omv-plugins-org-fedaykin.list</strong><br/>
+<strong>echo 'deb http://packages.omv-plugins.org fedaykin-armhf main' &gt;/etc/apt/sources.list.d/omv-plugins-org-fedaykin-armhf.list</strong><br/>
 <strong>wget -O - http://packages.omv-plugins.org/apt/99omv-plugins-org &gt; /etc/apt/preferences.d/99omv-plugins-org</strong><br/>
 <strong>wget -O - http://packages.omv-plugins.org/omv-plugins.pub|apt-key add -</strong>
 <br/><br/>
-Then openmediavault can be installed. (If the installation fail due to <strong>tftpd-hpa</strong> change <em>TFTP_OPTIONS</em> to <em>TFTP_OPTIONS=&#8221;&#8211;secure &#8211;ipv4&#8221; in /etc/default/tftpd-hpa</em>)
+Then openmediavault can be installed. (If the installation fail due to <strong>tftpd-hpa</strong> change <em>TFTP_OPTIONS</em> to <em>TFTP_OPTIONS="--secure --ipv4" in /etc/default/tftpd-hpa</em>)
 <br/>
 <strong>aptitude install openmediavault</strong>
 <br/><br/>
@@ -297,8 +306,8 @@ p openmediavault-cups - OpenMediaVault CUPS (network printer server)</li>
 
 I also like to make it listen on a specific port so I do the following:
 <br/>
-<strong>echo &#8216;Listen 8080&#8217; &gt;&gt; /etc/apache2/ports.conf</strong><br/>
-<strong>sed -i &#8216;s/&lt;VirtualHost \*:80&gt;/&lt;VirtualHost \*:8080&gt;/&#8217; /etc/apache2/sites-available/openmediavault-webgui</strong><br/>
+<strong>echo 'Listen 8080' &gt;&gt; /etc/apache2/ports.conf</strong><br/>
+<strong>sed -i 's/&lt;VirtualHost \*:80&gt;/&lt;VirtualHost \*:8080&gt;/' /etc/apache2/sites-available/openmediavault-webgui</strong><br/>
 
 
 
@@ -309,8 +318,8 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
 <strong>aptitude install apache2 php5 php5-json php5-gd php5-sqlite curl libcurl3 libcurl4-openssl-dev php5-curl php5-gd php5-cgi php-pear php5-dev build-essential libpcre3-dev libapache2-mod-php5 php-apc</strong>
 <br/><br/>
 <strong>pecl install apc</strong><br/>
-<strong>echo &#8220;apc.enabled=1&#8221; &gt;&gt; /etc/php5/cgi/conf.d/20-apc.ini</strong><br/>
-<strong>echo &#8220;apc.shm_size=30&#8221; &gt;&gt; /etc/php5/cgi/conf.d/20-apc.ini</strong><br/>
+<strong>echo "apc.enabled=1" &gt;&gt; /etc/php5/cgi/conf.d/20-apc.ini</strong><br/>
+<strong>echo "apc.shm_size=30" &gt;&gt; /etc/php5/cgi/conf.d/20-apc.ini</strong><br/>
 <br/><br/>
 <strong>vim /etc/php5/apache2/php.ini</strong><br/>
 <span style="color: #3366ff;">#Change upload_max_size</span><br/>
@@ -351,19 +360,12 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
 
 
 
-
-
-
-
-  
-
-
-<time datetime="2013-01-28T00:00:00+00:00" pubdate data-updated="true"></time>
+<time class='entry-date' datetime='2013-01-28T00:00:00+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>12:00 am</span></time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/raspberry-pi/'>Raspberry Pi</a>
+    <a class='category' href='/blog/categories/raspberry-pi/'>raspberry pi</a>
   
 </span>
 
@@ -372,7 +374,7 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/" data-via="" data-counturl="http://www.robindavid.fr/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/" data-via="" data-counturl="http://www.robindavid.fr/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/" >Tweet</a>
   
   
   
@@ -381,7 +383,7 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/10/08/windows-forensic-memo/" title="Previous Post: Windows Forensic Memo">&laquo; Windows Forensic Memo</a>
+        <a class="basic-alignment left" href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/" title="Previous Post: Kasiski-Babbage cryptanalysis in Python">&laquo; Kasiski-Babbage cryptanalysis in Python</a>
       
       
     </p>
@@ -394,8 +396,8 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
   
     <section id="titles">
 <!--   <a href="http://www.robindavid.fr" title="Robin David"><img id="logo" src="http://www.robindavid.fr/images/" /></a> -->
-  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David"><i class="fa fa-pagelines"></i>Robin David</a></h1>
-  <h3 id="site_subtitle">A site to remotly back up my brain.</h3>
+  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David">Robin David<i class="fa fa-pagelines"></i></a></h1>
+  <!-- <h3 id="site_subtitle">A site to remotly back up my brain.</h3> -->
 </section>
 <section>
 <!--   <h1 class="fa fa-pagelines"> Robin David</h1> -->
@@ -403,10 +405,12 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
 
 
   <div style="text-align:center;" class='contact'>
-	  <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/>
-    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>
-    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>
-    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>
+	  <!-- <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/> -->
+    <img src="/images/self_id.jpg" alt="Self" title="Self" /><br/><br/>
+    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
+    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
+    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
+    <a href='https://twitter.com/RobinDavid1' title='twitter'><i class='fa fa-twitter fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
     <a href='/atom.xml' title='rss'><i class='fa fa-rss fa-2x'></i></a>
   </div>
 
@@ -414,10 +418,12 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
 <section id="menu">
 <ul class="main-navigation" style="font-size:1.5em;font-weight:bold;">
   <li><a href="/"><i  class="fa fa-home"></i> &nbsp;&nbsp;Home</a></li>
-  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <li><a href="/publications/publications.html"><i  class="fa fa-university"></i> &nbsp;&nbsp;Publications</a></li>
+  <li><a href="/teachings/index.html"><i  class="fa fa-graduation-cap"></i> &nbsp;&nbsp;Teachings</a></li>
   <li><a href="/opencv-tutorial"><i class="fa fa-picture-o"></i> &nbsp;&nbsp;Tuto OpenCV</a></li>
-  <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li>
-  <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li>
+  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <!-- <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li> -->
+  <!-- <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li> -->
 </ul>
 </section>
 <section>
@@ -425,23 +431,11 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First config and services configuration</a>
+        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First Config and Services Configuration</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2012/10/08/windows-forensic-memo/">Windows Forensic Memo</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/16/wikipedia-frequency-analysis/">Wikipedia frequency analysis</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/15/useful-basic-function-python-memo/">Basic but useful function python Memo</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage cryptanalysis in Python</a>
+        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage Cryptanalysis in Python</a>
       </li>
     
   </ul>
@@ -456,7 +450,7 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
   <a href="https://github.com/RobinDavid">@RobinDavid</a> on GitHub
   
   <script type="text/javascript">
-    $.domReady(function(){
+    $(document).ready(function(){
         if (!window.jXHR){
             var jxhr = document.createElement('script');
             jxhr.type = 'text/javascript';
@@ -479,17 +473,8 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li class='category'><a href='/blog/categories/autoit/'>AutoIt</a> (1)</li>
-<li class='category'><a href='/blog/categories/bsd/'>BSD</a> (1)</li>
-<li class='category'><a href='/blog/categories/bash/'>Bash</a> (4)</li>
-<li class='category'><a href='/blog/categories/cryptography/'>Cryptography</a> (2)</li>
-<li class='category'><a href='/blog/categories/linux/'>Linux</a> (7)</li>
-<li class='category'><a href='/blog/categories/linux-security/'>Linux Security</a> (3)</li>
-<li class='category'><a href='/blog/categories/memo/'>Memo</a> (3)</li>
-<li class='category'><a href='/blog/categories/network/'>Network</a> (1)</li>
-<li class='category'><a href='/blog/categories/piece-of-code/'>Piece of Code</a> (5)</li>
-<li class='category'><a href='/blog/categories/raspberry-pi/'>Raspberry Pi</a> (1)</li>
-<li class='category'><a href='/blog/categories/windows/'>Windows</a> (1)</li>
+    <li class='category'><a href='/blog/categories/cryptography/'>cryptography</a> (1)</li>
+<li class='category'><a href='/blog/categories/raspberry-pi/'>raspberry pi</a> (1)</li>
 
   </ul>
 </section>
@@ -503,7 +488,7 @@ Owncloud is an amazing private cloud, easy to be set up. The following commands 
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - Robin David -
+  Copyright &copy; 2015 - Robin David -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

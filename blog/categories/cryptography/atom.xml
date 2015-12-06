@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Cryptography | Robin David]]></title>
+  <title><![CDATA[Category: cryptography | Robin David]]></title>
   <link href="http://www.robindavid.fr/blog/categories/cryptography/atom.xml" rel="self"/>
   <link href="http://www.robindavid.fr/"/>
-  <updated>2014-03-15T20:29:55+00:00</updated>
+  <updated>2015-12-06T23:58:05+01:00</updated>
   <id>http://www.robindavid.fr/</id>
   <author>
     <name><![CDATA[Robin David]]></name>
@@ -14,203 +14,11 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Basic but useful function python Memo]]></title>
-    <link href="http://www.robindavid.fr/blog/2012/06/15/useful-basic-function-python-memo/"/>
-    <updated>2012-06-15T00:00:00+00:00</updated>
-    <id>http://www.robindavid.fr/blog/2012/06/15/useful-basic-function-python-memo</id>
-    <content type="html"><![CDATA[<h3>Read file into list</h3>
-
-<p>The function take a file open in read byte mode and return a list of the decimal value of characters.</p>
-
-<p>``` python Put every bytes of a file into a list
-def toList(f):</p>
-
-<pre><code>l = list()
-while True:
-    b = f.read(1)
-    if b == '':
-        break   
-    else:
-        l.append(ord(b))
-return l
-</code></pre>
-
-<p>```</p>
-
-<h3>Count instances of a char in a list</h3>
-
-<p>Return a sorted list ordered descending of every elements and their hits.</p>
-
-<p>``` python Count frequency of bytes
-def countFreq(l): # return list with (decimal_char, occ)</p>
-
-<pre><code>d={}
-for elt in l:
-    if d.has_key(elt):
-        d[elt] += 1
-    else:
-        d[elt] = 1
-return sorted(d.items(),key=lambda x: x[1], reverse=True)
-</code></pre>
-
-<p>```</p>
-
-<h3>Maximum in a dictionnary</h3>
-
-<p>Return the tuple key value of the element which have the highest value (from the list of elements returned in the function above
-``` python get max
-def max(d):</p>
-
-<pre><code>m = 0
-elt = ''
-for k,v in d.items():
-    if v &gt; m:
-        m = v
-        elt = k
-return {elt:m}
-</code></pre>
-
-<p>```</p>
-
-<h3>Caesar decipher</h3>
-
-<p>Decipher the given list with the given shift.</p>
-
-<p>``` python Caesar decipher function
-def decipher(l,diff):</p>
-
-<pre><code>newl = list()
-for e in l:
-    val = e - diff
-    if val &lt; 0:
-        newl.append(256 + (val % -256))
-    else:
-        newl.append(val)
-return newl
-</code></pre>
-
-<p>```</p>
-
-<h3>PGCD(GCD)</h3>
-
-<p>Return the PGCD(GCD) of two values given in parameter</p>
-
-<p>``` python compute GCD
-def pgcd(num,divisor,remain=0):</p>
-
-<pre><code>rem = num % divisor
-if rem == 0:
-    return remain
-else:
-    return pgcd(divisor,rem,rem)
-</code></pre>
-
-<p>```</p>
-
-<h3>Prime Numbers</h3>
-
-<p>Return a list of all the prime numbers until the number given in parameter.</p>
-
-<p>``` python compute prime numbers
-def getPrimeNb(x):</p>
-
-<pre><code>l =[]
-for i in range (1,x):
-    if pgcd(x,i) == 1:
-        l.append(i)
-return l
-</code></pre>
-
-<p>```</p>
-
-<h3>PGCD with Bezout Factors</h3>
-
-<p>For two numbers given in parameter the function return the PGCD and the two Bezout factors (u and v).
-``` python PGCD computation
-def pgcduv(num,divisor):</p>
-
-<pre><code>u = 1
-v = 0
-s = 0
-t = 1
-while (divisor &gt; 0):
-    rest = num % divisor
-    quo = num / divisor
-    #print "%s = %s * %s + %s" % (num, quo, divisor, rest)
-    # a = q * b + r
-    num = divisor
-    divisor = rest
-
-    tmp = s
-    s = u - quo * s
-    u = tmp
-
-    tmp = t
-    t = v - quo * t
-    v = tmp
-return num, u, v
-</code></pre>
-
-<p>```</p>
-
-<h3>Can be inversed</h3>
-
-<p>Return true or false if the number given in parameter can be inversed (use the pgcd function above).</p>
-
-<p>``` python
-def inverse_possible(modulo, num):</p>
-
-<pre><code>if pgcd(modulo, num, num) == 1:
-    return True
-else:
-    return False
-</code></pre>
-
-<p>```</p>
-
-<h3>Calculate inverse</h3>
-
-<p>Return the inverse of a number with the given modulo.</p>
-
-<p>``` python compute inverse
-def inverse(num, mod):</p>
-
-<pre><code>inv = 0
-for i in range(mod):
-    j = - mod
-    while j &lt; 0:
-        if (mod*i)+(num*j) == 1:
-            inv = j
-        j = j + 1
-return inv+mod
-</code></pre>
-
-<p>```</p>
-
-<h3>Coincidence index</h3>
-
-<p>Take in argument the list returned by countFreq, and the total size of the list and return de index of coincidence.</p>
-
-<p>``` python compute coincidence index
-def cI(occ,n):</p>
-
-<pre><code>somme = Decimal(0)
-tmp = Decimal(n*(n-1))
-for i in occ:
-    somme = somme + ( Decimal(i[1]*(i[1]-1)) / tmp )
-return somme
-</code></pre>
-
-<p>```</p>
-]]></content>
-  </entry>
-  
-  <entry>
     <title type="html"><![CDATA[Kasiski-Babbage cryptanalysis in Python]]></title>
     <link href="http://www.robindavid.fr/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/"/>
-    <updated>2012-06-15T00:00:00+00:00</updated>
+    <updated>2012-06-15T00:00:00+02:00</updated>
     <id>http://www.robindavid.fr/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python</id>
-    <content type="html"><![CDATA[<p>This article will show you how to decrypt text ciphered with Vigenere algorithm wihtout knowing neither the key neither the key length.</p>
+    <content type="html"><![CDATA[<p>This blog post shows a basic python implementation of the Kasiski-Babbage Cryptanalysis algorithm for solving a basic Vigenere crypto challenge.</p>
 
 <h2> Principle</h2>
 
@@ -220,78 +28,91 @@ return somme
 
 <p><img class="center" src="/images/matrix.png" title="&lsquo;matrix&rsquo;" ></p>
 
-<p>As we can see on the picture above there is 3 patterns with a respective distance of 70, 40 and 10. So we can easily suppose that the key length is a multiple of the three distance. In this case the greatest multiple is 10, we can suppose that key is 10 characters long.</p>
+<p>As we can see on the picture above there is 3 patterns with a respective distance of 70, 40 and 10. So we can easily state that the key length is a multiple of the three distances which is 10. So, we can suppose that key is 10 characters long.</p>
 
-<p>In this case we just have to split the text in 10, every ten characters to create 10 samples in which the frequency of characters can be analysed like in caesar.</p>
+<p>The key idea is then to split the text in 10 sub-texts with every ten characters in order to create 10 samples where the frequency of chars can be analyzed with a classical ceaser scheme.</p>
 
 <h2>Code !</h2>
 
 <p>The input file used for this example can be downloaded <a href="%20/downloads/kasiski-input.txt" title="">here</a></p>
 
-<p>The following use various helping functions showed in <a href="">useful-basic-function-python</a></p>
-
 <p>Now the key part of the cryptanalysis is to develop the algorithm to find all the tuples  throughout the text calculate theirs distance and the divisors of it.
-So the firt function to write is a function that calculate all the divisors of a value. The function below do the job and for the given integer return a list of all the divisors.
-``` python Get all the divisors of a given number
-def getDivisors(n):</p>
-
-<pre><code>l = []
-for i in range(2,n):
-    if n % i == 0:
-        l.append(i)
-return l
-</code></pre>
-
-<p>```</p>
+So the first function to write is a function that calculate all the divisors of a value. The function below do the job and for the given integer return a list of all the divisors.
+<code>python Get all the divisors of a given number
+def getDivisors(n):
+    l = []
+    for i in range(2,n):
+        if n % i == 0:
+            l.append(i)
+    return l
+</code></p>
 
 <p>Now let&rsquo;s move to the core function that find all the tuples. This function return two values that are the number of tuples found and a dirty list of the divisors of all tuples. (You will see later how it will be used).
-``` python Find identical patterns in list (size > 3)</p>
-
-<h1>l argument should be a list containing all bytes of the file (read with toList)</h1>
-
-<p>def getTuples(l):</p>
-
-<pre><code>res = {}
-freq =[]
-count = 0
-i = 0
-while i &lt; len(l): # Loop through all the list
-    elt= l[i:i+3] # Take at least 3-character length for tuples
-    long = len(elt)
-    if long == 3: #should be 3 if not means we are at the end of the list
-        for j in range(i+1,len(l)): #Find further in the list for the same pattern
-            if l[i:i+long] == l[j:j+long]: #If match the 3-char check for more
-                while l[i:i+long] == l[j:j+long]:
-                    long = long + 1
-                long = long -1
-                elt = l[i:i+long] # Now we have a tuple 
-                diff = j - i # Compute the distance
-                freq.extend(getDivisors(diff)) #Add the divisors to the list 
-                print ("%s\ti:%s\tj:%s\tdiff:%s\t\tDivisors:%s" % (elt,i,j, diff,getDivisors(diff))) #Print information about the tuple (can be deleted)
-                count = count +1
-                j = j + long + 1
-        i = i + long -3 +1
-    else:
-        i = i + 1
-return count, freq
-</code></pre>
-
-<p>```</p>
+<figure class='code'><figcaption><span>Find identical patterns in list (size > 3)</p></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">l</span> <span class="n">argument</span> <span class="n">should</span> <span class="n">be</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">containing</span> <span class="nb">all</span> <span class="nb">bytes</span> <span class="n">of</span> <span class="n">the</span> <span class="nb">file</span> <span class="p">(</span><span class="n">read</span> <span class="k">with</span> <span class="n">toList</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">getTuples</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>    <span class="n">freq</span> <span class="o">=</span><span class="p">[]</span>
+</span><span class='line'>    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">while</span> <span class="n">i</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">):</span> <span class="c"># Loop through all the list</span>
+</span><span class='line'>        <span class="n">elt</span><span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">3</span><span class="p">]</span> <span class="c"># Take at least 3-character length for tuples</span>
+</span><span class='line'>        <span class="nb">long</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">elt</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">if</span> <span class="nb">long</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c">#should be 3 if not means we are at the end of the list</span>
+</span><span class='line'>            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)):</span> <span class="c">#Find further in the list for the same pattern</span>
+</span><span class='line'>                <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="nb">long</span><span class="p">]</span> <span class="o">==</span> <span class="n">l</span><span class="p">[</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="nb">long</span><span class="p">]:</span> <span class="c">#If match the 3-char check for more</span>
+</span><span class='line'>                    <span class="k">while</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="nb">long</span><span class="p">]</span> <span class="o">==</span> <span class="n">l</span><span class="p">[</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="nb">long</span><span class="p">]:</span>
+</span><span class='line'>                        <span class="nb">long</span> <span class="o">=</span> <span class="nb">long</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>                    <span class="nb">long</span> <span class="o">=</span> <span class="nb">long</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>                    <span class="n">elt</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="nb">long</span><span class="p">]</span> <span class="c"># Now we have a tuple</span>
+</span><span class='line'>                    <span class="n">diff</span> <span class="o">=</span> <span class="n">j</span> <span class="o">-</span> <span class="n">i</span> <span class="c"># Compute the distance</span>
+</span><span class='line'>                    <span class="n">freq</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">getDivisors</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span> <span class="c">#Add the divisors to the list</span>
+</span><span class='line'>                    <span class="k">print</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="o">%</span><span class="n">s</span>\<span class="n">ti</span><span class="p">:</span><span class="o">%</span><span class="n">s</span>\<span class="n">tj</span><span class="p">:</span><span class="o">%</span><span class="n">s</span>\<span class="n">tdiff</span><span class="p">:</span><span class="o">%</span><span class="n">s</span>\<span class="n">t</span>\<span class="n">tDivisors</span><span class="p">:</span><span class="o">%</span><span class="n">s</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="o">%</span> <span class="p">(</span><span class="n">elt</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span><span class="n">getDivisors</span><span class="p">(</span><span class="n">diff</span><span class="p">)))</span> <span class="c">#Print information about the tuple (can be deleted)</span>
+</span><span class='line'>                    <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span><span class="mi">1</span>
+</span><span class='line'>                    <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="nb">long</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">long</span> <span class="o">-</span><span class="mi">3</span> <span class="o">+</span><span class="mi">1</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">count</span><span class="p">,</span> <span class="n">freq</span>
+</span></code></pre></td></tr></table></div></figure></p>
 
 <p>The next step is to make the count each divisors and sort them in descending order. The following function return a list sorted containing a tupe of the divisor number and the number of hits.
-``` python
-def countOcc(l): # return list with (decimal_char, occ)</p>
-
-<pre><code>d={}
-for elt in l:
-    if d.has_key(elt):
-        d[elt] += 1
-    else:
-        d[elt] = 1
-return sorted(d.items(),key=lambda x: x[1], reverse=True)
-</code></pre>
-
-<p>```</p>
+<code>python
+def countOcc(l): # return list with (decimal_char, occ)
+    d={}
+    for elt in l:
+        if d.has_key(elt):
+            d[elt] += 1
+        else:
+            d[elt] = 1
+    return sorted(d.items(),key=lambda x: x[1], reverse=True)
+</code></p>
 
 <p>The list returned by this function is:
 <strong>[(2, 143), (5, 142), (10, 138), (4, 72), (20, 69), (6, 42), (3, 42), (15, 41), (8, 39), (30, 39), (40, 36), (7, 29), (14, 29), (35, 29), (25, 28), (50, 24), (70, 24), (12, 20), (60, 20)]</strong></p>
@@ -300,72 +121,68 @@ return sorted(d.items(),key=lambda x: x[1], reverse=True)
 
 <p>Now that we &ldquo;know&rdquo; the key length we just have to split the ciphered list into 10 sub-lists modulo 10. The function below return take in argument the key length and the original list and return a dictionnary that use the position as key (ex: 1 to 10) and all the sub-lists as items.</p>
 
-<p>``` python Split file in sublist of 10 chars
-def explode(key,li):</p>
-
-<pre><code>dic = {}
-for e in range(1,key+1):
-    dic[e] = [] 
-i = 0
-for index in range(len(li)):
-    if i == key:
-        i = 0
-    dic[i+1].append(li[index])
-    i = i + 1
-return dic
+<pre><code class="python Split file in sublist of 10 chars">def explode(key,li):
+    dic = {}
+    for e in range(1,key+1):
+        dic[e] = [] 
+    i = 0
+    for index in range(len(li)):
+        if i == key:
+            i = 0
+        dic[i+1].append(li[index])
+        i = i + 1
+    return dic
 </code></pre>
-
-<p>```</p>
 
 <p>The next step is the second delicate step. Indeed we need to find the shift for each sub-list. To find it we can do a frequency analysis considering the space as the most frequent character like it used to be in english. So what we will do here is do a frequency analysis for each sub-list. For each sub-list we consider the most frequent character as a space and then apply the associated shift to all character. And then we recreate the original list with all decipher sub-list and then recreate the text. Once it&rsquo;s done we can easily identify if for one of the sub-list the space was not the most frequent and then we can try with the second most frequent and so on.
 The first function we need to acomplish this task is a function that decipher a list with a given shift:
-``` python
-def decipher(l,diff):</p>
-
-<pre><code>newl = list()
-for e in l:
-    val = e - diff
-    if val &lt; 0:
-        newl.append(256 + (val % -256))
-    else:
-        newl.append(val)
-return newl
-</code></pre>
-
-<p>```</p>
+<code>python
+def decipher(l,diff):
+    newl = list()
+    for e in l:
+        val = e - diff
+        if val &lt; 0:
+            newl.append(256 + (val % -256))
+        else:
+            newl.append(val)
+    return newl
+</code></p>
 
 <p>Now we need a function that do the reverse of the explode function. So this function takes back the dictionnary returned by explode and recreate the list.
-``` python
-def recreate(dic):</p>
-
-<pre><code>i = 0
-output = []
-try:
-    while 1:
-        for l in dic.values():
-            output.append(l[i])
-        i = i + 1
-except:
-    pass
-return output
-</code></pre>
-
-<p>```</p>
+<code>python
+def recreate(dic):
+    i = 0
+    output = []
+    try:
+        while 1:
+            for l in dic.values():
+                output.append(l[i])
+            i = i + 1
+    except:
+        pass
+    return output
+</code></p>
 
 <p>To finish the following piece of code explode the original list, makes a frequency analysis decipher all the sub-list, then recreate the list and end up by reconverting every decimal character into character in order to print the result.
-``` python final code to trigger the all
-res = explode(10, l) #We consider in this exemple a key length of 10 and l the original list
-for i in range(1,10+1): #For each sub-list</p>
-
-<pre><code>occ = countOcc(res[i]) #Make a frequency analysis
-shift = (occ[0][0] - 32) % 256 # Consider the most frequent element of being a space(32 in decimal)
-print ("Frequency analysis for the index: %s\tshift:%s\n%s\n" % (i,shift,occ)) #Print informations (can be deleted)
-res[i] = decipher(res[i],shift) #Try do decipher using a classical ceaser function and the determined shift
-</code></pre>
-
-<p>final = recreate(res) #Once we have processed all sub-list recreate a list with all the sub-lists.
-print &lsquo;&rsquo;.join([chr(x) for x in final]) #Print the result
-```</p>
+<figure class='code'><figcaption><span>final code to trigger the all</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">res</span> <span class="o">=</span> <span class="n">explode</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="c">#We consider in this exemple a key length of 10 and l the original list</span>
+</span><span class='line'><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span> <span class="c">#For each sub-list</span>
+</span><span class='line'>    <span class="n">occ</span> <span class="o">=</span> <span class="n">countOcc</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="c">#Make a frequency analysis</span>
+</span><span class='line'>    <span class="n">shift</span> <span class="o">=</span> <span class="p">(</span><span class="n">occ</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">32</span><span class="p">)</span> <span class="o">%</span> <span class="mi">256</span> <span class="c"># Consider the most frequent element of being a space(32 in decimal)</span>
+</span><span class='line'>    <span class="k">print</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Frequency</span> <span class="n">analysis</span> <span class="k">for</span> <span class="n">the</span> <span class="n">index</span><span class="p">:</span> <span class="o">%</span><span class="n">s</span>\<span class="n">tshift</span><span class="p">:</span><span class="o">%</span><span class="n">s</span>\<span class="n">n</span><span class="o">%</span><span class="n">s</span>\<span class="n">n</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">shift</span><span class="p">,</span><span class="n">occ</span><span class="p">))</span> <span class="c">#Print informations (can be deleted)</span>
+</span><span class='line'>    <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">decipher</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">shift</span><span class="p">)</span> <span class="c">#Try do decipher using a classical ceaser function and the determined shift&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">final</span> <span class="o">=</span> <span class="n">recreate</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="c">#Once we have processed all sub-list recreate a list with all the sub-lists.</span>
+</span><span class='line'><span class="k">print</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">chr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">final</span><span class="p">])</span> <span class="c">#Print the result</span>
+</span></code></pre></td></tr></table></div></figure></p>
 ]]></content>
   </entry>
   

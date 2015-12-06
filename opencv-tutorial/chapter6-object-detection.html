@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Chapter 6: Object detection - Robin David</title>
+  <title>Chapter 6: Object Detection - Robin David</title>
   <meta name="author" content="Robin David">
 
   
@@ -21,18 +21,35 @@
   <link rel="canonical" href="http://www.robindavid.fr/opencv-tutorial/chapter6-object-detection.html">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
   <link href="/atom.xml" rel="alternate" title="Robin David" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
 
 <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
 
+<link href='/stylesheets/custom/bootstrap_fragment.css' rel='stylesheet' type='text/css'>
+<!-- <link href='stylesheets/custom/bootstrap/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='stylesheets/custom/bootstrap/responsive.css' rel='stylesheet' type='text/css'> -->
+<style>html{
+	background: url("/images/background.png") no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;}
+	#site_title { padding: 5%;}
+  .mobile-nav { display:none; }
+  hr.myhr {
+    border: 1px dotted #585858;
+    border-style: none none dotted; 
+}
+  a { text-decoration: none;}
+</style>
 
 
 
@@ -50,7 +67,6 @@
   </script>
 
 
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
 </head>
 
 <body   >
@@ -65,7 +81,7 @@
   
 <form action="http://google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:www.robindavid.fr" />
+    <input type="hidden" name="sitesearch" value="www.robindavid.fr">
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -88,11 +104,6 @@
     
       <p class="meta">
         
-
-
-
-
-
 
 
 
@@ -269,11 +280,6 @@
 
 
 
-
-
-
-
-
       
 
 <span class="categories">
@@ -287,7 +293,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/opencv-tutorial/chapter6-object-detection.html" data-via="" data-counturl="http://www.robindavid.fr/opencv-tutorial/chapter6-object-detection.html" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/opencv-tutorial/chapter6-object-detection.html" data-via="" data-counturl="http://www.robindavid.fr/opencv-tutorial/chapter6-object-detection.html" >Tweet</a>
   
   
   
@@ -307,8 +313,8 @@
   
     <section id="titles">
 <!--   <a href="http://www.robindavid.fr" title="Robin David"><img id="logo" src="http://www.robindavid.fr/images/" /></a> -->
-  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David"><i class="fa fa-pagelines"></i>Robin David</a></h1>
-  <h3 id="site_subtitle">A site to remotly back up my brain.</h3>
+  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David">Robin David<i class="fa fa-pagelines"></i></a></h1>
+  <!-- <h3 id="site_subtitle">A site to remotly back up my brain.</h3> -->
 </section>
 <section>
 <!--   <h1 class="fa fa-pagelines"> Robin David</h1> -->
@@ -316,10 +322,12 @@
 
 
   <div style="text-align:center;" class='contact'>
-	  <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/>
-    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>
-    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>
-    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>
+	  <!-- <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/> -->
+    <img src="/images/self_id.jpg" alt="Self" title="Self" /><br/><br/>
+    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
+    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
+    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
+    <a href='https://twitter.com/RobinDavid1' title='twitter'><i class='fa fa-twitter fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
     <a href='/atom.xml' title='rss'><i class='fa fa-rss fa-2x'></i></a>
   </div>
 
@@ -327,10 +335,12 @@
 <section id="menu">
 <ul class="main-navigation" style="font-size:1.5em;font-weight:bold;">
   <li><a href="/"><i  class="fa fa-home"></i> &nbsp;&nbsp;Home</a></li>
-  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <li><a href="/publications/publications.html"><i  class="fa fa-university"></i> &nbsp;&nbsp;Publications</a></li>
+  <li><a href="/teachings/index.html"><i  class="fa fa-graduation-cap"></i> &nbsp;&nbsp;Teachings</a></li>
   <li><a href="/opencv-tutorial"><i class="fa fa-picture-o"></i> &nbsp;&nbsp;Tuto OpenCV</a></li>
-  <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li>
-  <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li>
+  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <!-- <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li> -->
+  <!-- <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li> -->
 </ul>
 </section>
 <section>
@@ -338,23 +348,11 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First config and services configuration</a>
+        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First Config and Services Configuration</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2012/10/08/windows-forensic-memo/">Windows Forensic Memo</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/16/wikipedia-frequency-analysis/">Wikipedia frequency analysis</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/15/useful-basic-function-python-memo/">Basic but useful function python Memo</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage cryptanalysis in Python</a>
+        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage Cryptanalysis in Python</a>
       </li>
     
   </ul>
@@ -369,7 +367,7 @@
   <a href="https://github.com/RobinDavid">@RobinDavid</a> on GitHub
   
   <script type="text/javascript">
-    $.domReady(function(){
+    $(document).ready(function(){
         if (!window.jXHR){
             var jxhr = document.createElement('script');
             jxhr.type = 'text/javascript';
@@ -392,17 +390,8 @@
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li class='category'><a href='/blog/categories/autoit/'>AutoIt</a> (1)</li>
-<li class='category'><a href='/blog/categories/bsd/'>BSD</a> (1)</li>
-<li class='category'><a href='/blog/categories/bash/'>Bash</a> (4)</li>
-<li class='category'><a href='/blog/categories/cryptography/'>Cryptography</a> (2)</li>
-<li class='category'><a href='/blog/categories/linux/'>Linux</a> (7)</li>
-<li class='category'><a href='/blog/categories/linux-security/'>Linux Security</a> (3)</li>
-<li class='category'><a href='/blog/categories/memo/'>Memo</a> (3)</li>
-<li class='category'><a href='/blog/categories/network/'>Network</a> (1)</li>
-<li class='category'><a href='/blog/categories/piece-of-code/'>Piece of Code</a> (5)</li>
-<li class='category'><a href='/blog/categories/raspberry-pi/'>Raspberry Pi</a> (1)</li>
-<li class='category'><a href='/blog/categories/windows/'>Windows</a> (1)</li>
+    <li class='category'><a href='/blog/categories/cryptography/'>cryptography</a> (1)</li>
+<li class='category'><a href='/blog/categories/raspberry-pi/'>raspberry pi</a> (1)</li>
 
   </ul>
 </section>
@@ -416,7 +405,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - Robin David -
+  Copyright &copy; 2015 - Robin David -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

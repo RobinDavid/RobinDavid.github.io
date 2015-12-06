@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Kasiski-Babbage cryptanalysis in Python - Robin David</title>
+  <title>Kasiski-Babbage Cryptanalysis in Python - Robin David</title>
   <meta name="author" content="Robin David">
 
   
-  <meta name="description" content="This article will show you how to decrypt text ciphered with Vigenere algorithm wihtout knowing neither the key neither the key length.  Principle &hellip;">
+  <meta name="description" content="This blog post shows a basic python implementation of the Kasiski-Babbage Cryptanalysis algorithm for solving a basic Vigenere crypto challenge.   &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,18 +21,35 @@
   <link rel="canonical" href="http://www.robindavid.fr/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
   <link href="/atom.xml" rel="alternate" title="Robin David" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
 
 <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
 
+<link href='/stylesheets/custom/bootstrap_fragment.css' rel='stylesheet' type='text/css'>
+<!-- <link href='stylesheets/custom/bootstrap/bootstrap.css' rel='stylesheet' type='text/css'>
+<link href='stylesheets/custom/bootstrap/responsive.css' rel='stylesheet' type='text/css'> -->
+<style>html{
+	background: url("/images/background.png") no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;}
+	#site_title { padding: 5%;}
+  .mobile-nav { display:none; }
+  hr.myhr {
+    border: 1px dotted #585858;
+    border-style: none none dotted; 
+}
+  a { text-decoration: none;}
+</style>
 
 
 
@@ -50,7 +67,6 @@
   </script>
 
 
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
 </head>
 
 <body   >
@@ -65,7 +81,7 @@
   
 <form action="http://google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:www.robindavid.fr" />
+    <input type="hidden" name="sitesearch" value="www.robindavid.fr">
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -92,21 +108,14 @@
 
 
 
-
-
-
-
-  
-
-
-<time datetime="2012-06-15T00:00:00+00:00" pubdate data-updated="true"></time>
+<time class='entry-date' datetime='2012-06-15T00:00:00+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>12:00 am</span></time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>This article will show you how to decrypt text ciphered with Vigenere algorithm wihtout knowing neither the key neither the key length.</p>
+<div class="entry-content"><p>This blog post shows a basic python implementation of the Kasiski-Babbage Cryptanalysis algorithm for solving a basic Vigenere crypto challenge.</p>
 
 <h2> Principle</h2>
 
@@ -116,18 +125,16 @@
 
 <p><img class="center" src="/images/matrix.png" title="'matrix'" ></p>
 
-<p>As we can see on the picture above there is 3 patterns with a respective distance of 70, 40 and 10. So we can easily suppose that the key length is a multiple of the three distance. In this case the greatest multiple is 10, we can suppose that key is 10 characters long.</p>
+<p>As we can see on the picture above there is 3 patterns with a respective distance of 70, 40 and 10. So we can easily state that the key length is a multiple of the three distances which is 10. So, we can suppose that key is 10 characters long.</p>
 
-<p>In this case we just have to split the text in 10, every ten characters to create 10 samples in which the frequency of characters can be analysed like in caesar.</p>
+<p>The key idea is then to split the text in 10 sub-texts with every ten characters in order to create 10 samples where the frequency of chars can be analyzed with a classical ceaser scheme.</p>
 
 <h2>Code !</h2>
 
 <p>The input file used for this example can be downloaded <a href="/downloads/kasiski-input.txt" title="">here</a></p>
 
-<p>The following use various helping functions showed in <a href="">useful-basic-function-python</a></p>
-
 <p>Now the key part of the cryptanalysis is to develop the algorithm to find all the tuples  throughout the text calculate theirs distance and the divisors of it.
-So the firt function to write is a function that calculate all the divisors of a value. The function below do the job and for the given integer return a list of all the divisors.</p>
+So the first function to write is a function that calculate all the divisors of a value. The function below do the job and for the given integer return a list of all the divisors.</p>
 
 <figure class='code'><figcaption><span>Get all the divisors of a given number</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -340,19 +347,12 @@ The first function we need to acomplish this task is a function that decipher a 
 
 
 
-
-
-
-
-  
-
-
-<time datetime="2012-06-15T00:00:00+00:00" pubdate data-updated="true"></time>
+<time class='entry-date' datetime='2012-06-15T00:00:00+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>12:00 am</span></time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/cryptography/'>Cryptography</a>, <a class='category' href='/blog/categories/piece-of-code/'>Piece of Code</a>
+    <a class='category' href='/blog/categories/cryptography/'>cryptography</a>
   
 </span>
 
@@ -361,7 +361,7 @@ The first function we need to acomplish this task is a function that decipher a 
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/" data-via="" data-counturl="http://www.robindavid.fr/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.robindavid.fr/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/" data-via="" data-counturl="http://www.robindavid.fr/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/" >Tweet</a>
   
   
   
@@ -370,10 +370,8 @@ The first function we need to acomplish this task is a function that decipher a 
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/04/23/pystatgrab-memo/" title="Previous Post: pystatgrab Memo">&laquo; pystatgrab Memo</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/06/15/useful-basic-function-python-memo/" title="Next Post: Basic but useful function python Memo">Basic but useful function python Memo &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/" title="Next Post: Raspberry Pi: First config and services configuration">Raspberry Pi: First config and services configuration &raquo;</a>
       
     </p>
   </footer>
@@ -385,8 +383,8 @@ The first function we need to acomplish this task is a function that decipher a 
   
     <section id="titles">
 <!--   <a href="http://www.robindavid.fr" title="Robin David"><img id="logo" src="http://www.robindavid.fr/images/" /></a> -->
-  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David"><i class="fa fa-pagelines"></i>Robin David</a></h1>
-  <h3 id="site_subtitle">A site to remotly back up my brain.</h3>
+  <h1 id="site_title"><a href="http://www.robindavid.fr" title="Robin David">Robin David<i class="fa fa-pagelines"></i></a></h1>
+  <!-- <h3 id="site_subtitle">A site to remotly back up my brain.</h3> -->
 </section>
 <section>
 <!--   <h1 class="fa fa-pagelines"> Robin David</h1> -->
@@ -394,10 +392,12 @@ The first function we need to acomplish this task is a function that decipher a 
 
 
   <div style="text-align:center;" class='contact'>
-	  <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/>
-    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>
-    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>
-    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>
+	  <!-- <img src="http://www.gravatar.com/avatar/4e787cbb6531b2b9c0ab5015f97bf421?s=200" alt="Gravatar of Robin David " title="Gravatar of Robin David" /><br/> -->
+    <img src="/images/self_id.jpg" alt="Self" title="Self" /><br/><br/>
+    <a href='mailto:dev.robin.david[.at.]gmail[dot]com'><i class='fa fa-envelope fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
+    <a href='http://github.com/RobinDavid' title='github'><i class='fa fa-github-square fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
+    <a href='http://www.linkedin.com/pub/robin-david/85/46/173/en' title='linkedin'><i class='fa fa-linkedin fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
+    <a href='https://twitter.com/RobinDavid1' title='twitter'><i class='fa fa-twitter fa-2x'></i></a>&nbsp;&nbsp;&nbsp;
     <a href='/atom.xml' title='rss'><i class='fa fa-rss fa-2x'></i></a>
   </div>
 
@@ -405,10 +405,12 @@ The first function we need to acomplish this task is a function that decipher a 
 <section id="menu">
 <ul class="main-navigation" style="font-size:1.5em;font-weight:bold;">
   <li><a href="/"><i  class="fa fa-home"></i> &nbsp;&nbsp;Home</a></li>
-  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <li><a href="/publications/publications.html"><i  class="fa fa-university"></i> &nbsp;&nbsp;Publications</a></li>
+  <li><a href="/teachings/index.html"><i  class="fa fa-graduation-cap"></i> &nbsp;&nbsp;Teachings</a></li>
   <li><a href="/opencv-tutorial"><i class="fa fa-picture-o"></i> &nbsp;&nbsp;Tuto OpenCV</a></li>
-  <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li>
-  <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li>
+  <li><a href="/blog"><i  class="fa fa-th-list"></i> &nbsp;&nbsp;Blog</a></li>
+  <!-- <li><a href="/links"><i  class="fa fa-chain"></i> &nbsp;&nbsp;Links</a></li> -->
+  <!-- <li><a href="/blog/archives"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;Archives</a></li> -->
 </ul>
 </section>
 <section>
@@ -416,23 +418,11 @@ The first function we need to acomplish this task is a function that decipher a 
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First config and services configuration</a>
+        <a href="/blog/2013/01/28/raspberry-pi-first-config-and-services-configuration/">Raspberry Pi: First Config and Services Configuration</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2012/10/08/windows-forensic-memo/">Windows Forensic Memo</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/16/wikipedia-frequency-analysis/">Wikipedia frequency analysis</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/15/useful-basic-function-python-memo/">Basic but useful function python Memo</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage cryptanalysis in Python</a>
+        <a href="/blog/2012/06/15/kasiski-babbage-cryptanalysis-in-python/">Kasiski-Babbage Cryptanalysis in Python</a>
       </li>
     
   </ul>
@@ -447,7 +437,7 @@ The first function we need to acomplish this task is a function that decipher a 
   <a href="https://github.com/RobinDavid">@RobinDavid</a> on GitHub
   
   <script type="text/javascript">
-    $.domReady(function(){
+    $(document).ready(function(){
         if (!window.jXHR){
             var jxhr = document.createElement('script');
             jxhr.type = 'text/javascript';
@@ -470,17 +460,8 @@ The first function we need to acomplish this task is a function that decipher a 
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li class='category'><a href='/blog/categories/autoit/'>AutoIt</a> (1)</li>
-<li class='category'><a href='/blog/categories/bsd/'>BSD</a> (1)</li>
-<li class='category'><a href='/blog/categories/bash/'>Bash</a> (4)</li>
-<li class='category'><a href='/blog/categories/cryptography/'>Cryptography</a> (2)</li>
-<li class='category'><a href='/blog/categories/linux/'>Linux</a> (7)</li>
-<li class='category'><a href='/blog/categories/linux-security/'>Linux Security</a> (3)</li>
-<li class='category'><a href='/blog/categories/memo/'>Memo</a> (3)</li>
-<li class='category'><a href='/blog/categories/network/'>Network</a> (1)</li>
-<li class='category'><a href='/blog/categories/piece-of-code/'>Piece of Code</a> (5)</li>
-<li class='category'><a href='/blog/categories/raspberry-pi/'>Raspberry Pi</a> (1)</li>
-<li class='category'><a href='/blog/categories/windows/'>Windows</a> (1)</li>
+    <li class='category'><a href='/blog/categories/cryptography/'>cryptography</a> (1)</li>
+<li class='category'><a href='/blog/categories/raspberry-pi/'>raspberry pi</a> (1)</li>
 
   </ul>
 </section>
@@ -494,7 +475,7 @@ The first function we need to acomplish this task is a function that decipher a 
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - Robin David -
+  Copyright &copy; 2015 - Robin David -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
