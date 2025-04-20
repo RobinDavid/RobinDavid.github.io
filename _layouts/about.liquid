@@ -33,7 +33,16 @@ layout: default
           %}
         {% endif %}
         {% if page.profile.more_info %}
-          <div class="more-info">{{ page.profile.more_info }}</div>
+
+          {% comment %} <div class="more-info">{{ page.profile.more_info }}</div> {% endcomment %}
+          {% if page.social %}
+            <div class="social">
+              <div class="contact-icons">{% include social.liquid %}</div>
+
+              {% comment %} <div class="contact-note">{{ site.contact_note }}</div> {% endcomment %}
+            </div>
+          {% endif %}
+
         {% endif %}
       </div>
     {% endif %}
@@ -43,7 +52,7 @@ layout: default
     <!-- News -->
     {% if page.announcements and page.announcements.enabled %}
       <h2>
-        <a href="{{ '/news/' | relative_url }}" style="color: inherit">news</a>
+        <a href="{{ '/news/' | relative_url }}" style="color: inherit">News & Upcoming</a>
       </h2>
       {% include news.liquid limit=true %}
     {% endif %}
@@ -51,7 +60,7 @@ layout: default
     <!-- Latest posts -->
     {% if page.latest_posts and page.latest_posts.enabled %}
       <h2>
-        <a href="{{ '/blog/' | relative_url }}" style="color: inherit">latest posts</a>
+        <a href="{{ '/blog/' | relative_url }}" style="color: inherit">Latest Posts</a>
       </h2>
       {% include latest_posts.liquid %}
     {% endif %}
@@ -65,13 +74,13 @@ layout: default
     {% endif %}
 
     <!-- Social -->
-    {% if page.social %}
+    {% comment %} {% if page.social %}
       <div class="social">
         <div class="contact-icons">{% include social.liquid %}</div>
 
         <div class="contact-note">{{ site.contact_note }}</div>
       </div>
-    {% endif %}
+    {% endif %} {% endcomment %}
 
     {% if site.newsletter and site.newsletter.enabled and site.footer_fixed %}
       {% include newsletter.liquid center=true %}

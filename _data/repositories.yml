@@ -1,14 +1,17 @@
 github_users:
-  - torvalds
-  - alshedivat
+  - RobinDavid
 
 repo_description_lines_max: 2
 
 github_repos:
-  - alshedivat/al-folio
-  - jekyll/jekyll
-  - twbs/bootstrap
-  - jquery/jquery
-  - FortAwesome/Font-Awesome
-  - mathjax/MathJax
-  - jpswalsh/academicons
+  # - quarkslab/pyrrha
+  - quarkslab/qbindiff
+  - quarkslab/python-binexport
+  - quarkslab/python-bindiff
+  - quarkslab/idascript
+  - quarkslab/qsynthesis
+  - quarkslab/tritondse
+  - quarkslab/pastis
+  - quarkslab/quokka
+  - quarkslab/numbat
+  - RobinDavid/findcrypt4-yara
