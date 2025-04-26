@@ -10,7 +10,4 @@ children:
   - title: divider
   - title: PhD Advising & Jury
     permalink: /phds/
-  - title: divider
-  - title: Seminars
-    permalink: /seminars/
 ---
