@@ -1,0 +1,71 @@
+"InterBTC":
+  title: "InterBTC - Vault Client"
+  subtitle: "Technical audit report"
+  summary: |
+    Audit report of the Interlay’s vault-client security assessment, an off-chain component bridging
+    InterBTC/Kintsugi and Bitcoin. The audit assessed the correctness of the implementation, secure key
+    management, and resilience against attacks affecting availability or enabling asset theft. Although
+    prior audits and bug bounty reports had addressed issues, this assessment identified four new potential
+    weaknesses—one of which is rated high risk due to a possible double payment upon vault restart.
+    However, the conditions required to exploit this flaw are extremely unlikely, involving rare synchronization
+    failures with the Bitcoin chain.
+  date: 2022-11-21
+  prepared_for: Interlay
+  blog_url: 
+  pdf_url: https://github.com/quarkslab/public-reports/blob/main/Reports/22-09-1042-REP-2.pdf
+  image: interbtc-cover.png
+
+
+"XCM":
+  title: "XCM: Cross-Consensus Messaging Audit"
+  subtitle: "Technical audit report"
+  summary: |
+    This report presents the results of a security audit conducted by Quarkslab on the
+    Cross-Consensus Messaging (XCM) mechanism developed by Parity for the Kusama and
+    Polkadot blockchains. XCM enables communication between relay chains and parachains,
+    and the audit focused on its core components: the XCM pallet and executor, particularly
+    in the context of the Kusama and parachain-template configurations using XCMv2. The
+    evaluation aimed to ensure the system prevents inconsistencies between chain states,
+    misconfigurations, and unauthorized asset transfers. This second audit (the first being
+    by another firm) found no major vulnerabilities. The report details XCM’s inner workings
+    and highlights design elements that contribute to its robustness.
+  date: 2022-01-31
+  prepared_for: Parity Technologies
+  blog_url: https://blog.quarkslab.com/a-brief-overview-of-auditing-xcmv2.html
+  pdf_url: https://blog.quarkslab.com/resources/2022-02-27-xcmv2-audit/21-12-908-REP.pdf
+  image: xcm-cover.png
+
+"litecoin":
+  title: "Litecoin — Mimble Wimble audit"
+  subtitle: "Technical audit report"
+  summary: |
+    Report containing the security evaluation results of a MimbleWimble (MW) implementation in
+    Litecoin. MW enables confidential transactions by hiding amounts and enhancing privacy
+    through coin fungibility and transaction aggregation. The algorithm uses a bulletproof-like
+    zero-knowledge algorithm. Since Litecoin’s UTXO-based main chain cannot natively support
+    MW, it is implemented as a sidechain. The audit focused on verifying the correctness of
+    its integration into the Litecoin codebase, especially regarding new consensus rules and
+    preventing regressions. A major vulnerability affecting chain consistency was discovered.
+  date: 2021-10-20
+  prepared_for: Litecoin Foundation
+  blog_url: https://blog.quarkslab.com/audit-of-the-mimblewimble-integration-inside-litecoin.html
+  pdf_url: https://blog.quarkslab.com/resources/2021-12-08_litecoin/21-08-872-REP.pdf
+  image: litecoin-cover.png
+
+"pastis":
+  title: "État de l’art : Techniques de fuzzing, exécution symbolique, slicing et combinaisons (FR)"
+  subtitle: 
+  summary: |
+    This report presents the results of a state-of-the-art commissioned by the *Direction Générale de l’Armement* (DGA)
+    to Quarkslab, focusing on the state of the art in fuzzing, symbolic execution, and slicing techniques.
+    The study aims to provide a comprehensive overview of these techniques and their potential
+    applications in the context of vulnerability detection in embedded software. The report includes
+    a detailed analysis of existing tools and methodologies, highlighting their strengths and weaknesses.
+    It also discusses the challenges of combining the approaches together. This report reflects
+    the state of the art as of 2020 but is a comprehensive corpora for any beginer in the field.
+  date: 2020-01-11
+  prepared_for: DGA-MI
+  blog_url: 
+  pdf_url: https://github.com/quarkslab/public-reports/blob/main/Reports/18-11-488-REP.pdf
+  image: pastis-cover.png
+
