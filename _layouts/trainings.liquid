@@ -1,0 +1,88 @@
+---
+layout: page
+---
+<div class="post">
+  <article>
+    {% if site.data.trainings %}
+      {% for training in site.data.trainings %}
+        {% assign data = training[1] %}
+        {% assign eveodd = cycle 'odd', 'even' %}
+        <hr>
+        <h2>{{ data.fullname }}</h2>
+
+        {% for trainer in data.trainers %}
+          <em style="font-size: larger;">{{ trainer.name }}</em>{% unless forloop.last %}, {% endunless %}
+        {% endfor %}
+        <br/>
+        <div style="text-align: justify;">
+            {{ data.abstract}}
+        </div>
+        <br/>
+        <div>
+            <strong>Duration:</strong> {{ data.duration }}
+        </div>
+        <div>
+          <strong>Target audience:</strong> {{ data.target_audience }}
+        </div>
+        <br/>
+
+        {% assign image_class = 'img-fluid z-depth-1 rounded' %}
+
+        <div>
+          <h4>Upcoming sessions</h4>
+          {% if data.upcoming and data.upcoming.size > 0 %}
+            <ul>
+              {% for session in data.upcoming %}
+                <li style="overflow: hidden;">
+                  {% if session.image %}
+                  {% assign image_path = session.image | prepend: 'assets/img/' %}
+                  {% assign image_class = 'img-fluid z-depth-1 rounded' %}
+                  {% capture sizes %}(min-width: {{ site.max_width }}) {{ site.max_width | minus: 30 | times: 0.3}}px, (min-width: 576px) 30vw, 95vw"{% endcapture %}
+                  <div style="float: right; margin-left: 15px; margin-bottom: 10px;">
+                    {% include figure.liquid loading="eager" path=image_path class=image_class sizes=sizes alt=profile.image %}
+                  </div>
+                  {% endif %}
+                  <strong>Name:</strong> <a href="{{ session.url }}">{{ session.name }}</a><br/>
+                  <strong>Date:</strong> {{ session.date }}<br/>
+                  <strong>Location:</strong> {{ session.location }}
+                </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+              <p><em>No upcoming session</em></p>
+          {% endif %}
+        </div>
+        <br/>
+
+        <div>
+          <h4>Past sessions</h4>
+          {% if data.past_venues and data.past_venues.size > 0 %}
+            <ul>
+              {% for session in data.past_venues %}
+                <li style="overflow: hidden;">
+                  {% if session.image %}
+                  {% assign image_path = session.image | prepend: 'assets/img/' %}
+                  {% assign image_class = 'img-fluid z-depth-1 rounded' %}
+                  {% capture sizes %}(min-width: {{ site.max_width }}) {{ site.max_width | minus: 30 | times: 0.3}}px, (min-width: 576px) 30vw, 95vw"{% endcapture %}
+                  <div style="float: right; margin-right: 300px; margin-bottom: 10px;">
+                    {% include figure.liquid loading="eager" path=image_path class=image_class sizes=sizes alt=profile.image %}
+                  </div>
+                  {% endif %}
+                    <div style="max-width: 300px; word-wrap: break-word;">
+                    <strong>Name:</strong> <a href="{{ session.url }}">{{ session.name }}</a><br/>
+                    <strong>Date:</strong> {{ session.date }}<br/>
+                    <strong>Location:</strong> {{ session.location }}
+                    </div>
+                </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+              <p><em>No past sessions</em></p>
+          {% endif %}
+        </div>
+
+
+      {% endfor %}
+    {% endif %}
+  </article>
+</div>
