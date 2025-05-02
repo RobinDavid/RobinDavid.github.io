@@ -10,7 +10,4 @@ children:
   - title: divider
   - title: Tech Magazine
     permalink: /tech-magazine/
-  - title: divider
-  - title: Patents
-    permalink: /patents/
 ---

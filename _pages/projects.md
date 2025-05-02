@@ -5,7 +5,7 @@ permalink: /projects/
 description: Collection of current and past projects.
 nav: true
 nav_order: 6
-display_categories: [work, fun]
+display_categories: [diffing, fuzzing, datasets]
 horizontal: false
 ---
 
