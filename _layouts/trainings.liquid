@@ -6,7 +6,6 @@ layout: page
     {% if site.data.trainings %}
       {% for training in site.data.trainings %}
         {% assign data = training[1] %}
-        {% assign eveodd = cycle 'odd', 'even' %}
         <hr>
         <h2>{{ data.fullname }}</h2>
 
