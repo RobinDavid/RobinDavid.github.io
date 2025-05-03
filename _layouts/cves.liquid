@@ -1,0 +1,30 @@
+---
+layout: page
+---
+<div class="post">
+  <article>
+    {% if site.data.cves %}
+      {% for cve in site.data.cves %}
+        <hr>
+        <h2>{{ cve.id }}</h2>
+        <div style="text-align: justify;">
+            {{ cve.summary | markdownify }}
+        </div>
+        <div>
+            <strong>Date:</strong> {{ cve.date }}
+        </div>
+        <div class="links">
+          {% if cve.blog_url %}
+            <a href="{{ cve.blog_url }}" class="btn btn-sm z-depth-0" style="border:1px solid var(--global-text-color)" role="button">Blog</a>
+          {% endif %}
+          {% if cve.nvd_url %}
+            <a href="{{ cve.nvd_url }}" class="btn btn-sm z-depth-0" style="border:1px solid var(--global-text-color)" role="button">NVD</a>
+          {% endif %}
+          {% if cve.mitre_url %}
+            <a href="{{ cve.mitre_url }}" class="btn btn-sm z-depth-0" style="border:1px solid var(--global-text-color)" role="button">MITRE</a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </article>
+</div>

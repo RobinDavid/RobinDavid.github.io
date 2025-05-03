@@ -1,0 +1,18 @@
+- id: "CVE-2022-46078"
+  summary: |
+    Integer overflow in ``ipv4ReassembleDatagram`` function handling IPv4 packet fragmentation.
+    Offset which are user-controlled are not properly handled leading to an overflow.
+  date: 2022-07-22
+  blog_url:
+  nvd_url: 
+  mitre_url: https://www.cve.org/CVERecord?id=CVE-2022-46078
+
+
+- id: "CVE-2021-26788"
+  summary: |
+    Oryx Embedded CycloneTCP 1.7.6 to 2.0.0, fixed in 2.0.2, is affected by incorrect input
+    validation in TCP options, which may cause a denial of service (DoS).
+  date: 2021-03-08
+  blog_url: https://blog.quarkslab.com/remote-denial-of-service-on-cyclonetcp-cve-2021-26788.html
+  nvd_url: https://nvd.nist.gov/vuln/detail/CVE-2021-26788
+  mitre_url: https://www.cve.org/CVERecord?id=CVE-2021-26788
