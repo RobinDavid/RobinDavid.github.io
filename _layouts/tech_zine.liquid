@@ -1,0 +1,46 @@
+---
+layout: page
+---
+<div class="post">
+  <article>
+    {% if site.data.tech_zine %}
+      {% for data in site.data.tech_zine %}
+        {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
+        <hr>
+        <div class="profile float-{% if thecycle == 'even' %}left{% else %}right{% endif %}">
+          {% if data.image %}
+            {% assign image_path = data.image | prepend: 'assets/img/publication_preview/' %}
+            {% assign image_class = 'img-fluid z-depth-1 rounded' %}
+            {% capture sizes %}(min-width: {{ site.max_width }}) {{ site.max_width | minus: 30 | times: 0.3}}px, (min-width: 576px) 30vw, 95vw"{% endcapture %}
+            {% include figure.liquid loading="eager" path=image_path class=image_class sizes=sizes alt=profile.image %}
+          {% endif %}
+          {% if data.url %}
+            <div class="more-info">
+                <div style="text-align: center;">
+                <a href="{{ data.url }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                  Full Article
+                </a>
+                </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="clearfix">
+          <h3>{{ data.title }}</h3>
+          {% if data.subtitle %}
+            <h5>{{ data.subtitle }}</h5>
+          {% endif %}
+          <div style="text-align: justify;">
+            {{ data.summary | markdownify }}
+          </div>
+          <div>
+              <strong>Magazine:</strong> {{ data.magazine }}
+          </div>
+          <div>
+            <strong>Date:</strong> {{ data.date }}
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </article>
+</div>

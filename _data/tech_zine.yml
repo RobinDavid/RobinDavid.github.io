@@ -1,0 +1,85 @@
+
+- title: "Manipulation du Trafic et des Protocoles Réseaux en Userland"
+  subtitle: "Partie (2/2)"
+  summary: |
+    De nombreux outils permettent la manipulation du réseau en userland. Le plus
+    connu est Scapy qui permet de coder, décoder, recevoir en envoyer des trames
+    sur le réseau en fournissant une interface aux RAW sockets. Cet article montre
+    les possibilités offertes en combinant une pile TCP/IP *"stateful"* basique
+    avec Scapy pour la manipulation et la création de trafic réseau.
+  date: 2015-03
+  url: https://boutique.ed-diamond.com/home/847-misc-78.html
+  image: misc-78.png
+  magazine: "MISC-78"
+
+- title: "Manipulation du Trafic et des Protocoles Réseaux en Userland"
+  subtitle: "Partie (1/2)"
+  summary: |
+    De nombreux outils permettent la manipulation du réseau en userland. Le plus
+    connu est Scapy qui permet de coder, décoder, recevoir en envoyer des trames
+    sur le réseau en fournissant une interface aux RAW sockets. Cet article montre
+    les possibilités offertes en combinant une pile TCP/IP *"stateful"* basique
+    avec Scapy pour la manipulation et la création de trafic réseau.
+  date: 2015-01
+  url: https://boutique.ed-diamond.com/completez-votre-collection-d-anciens-numeros/794-misc-77.html
+  image: misc-77.png
+  magazine: "MISC-77"
+
+- title: "Automatisation des Audits de Sécurité avec SCAP"
+  summary: |
+    Analyser un ordinateur lors d'un audit est souvent une tâche longue et fastidieuse.
+    Cette analyse devient problématique quand elle s'applique à un parc informatique
+    conséquent dont les configurations sont parfois très hétérogènes. Cet article a pour
+    objectif de présenter SCAP (Secure Content Automation Protocol), un protocole standardisé
+    d'expression de tests permettant d'automatiser le relevé de configuration d'un ou
+    plusieurs systèmes et d'appliquer les correctifs nécessaires par rapport à un référentiel
+    donné.
+  date: 2014-07
+  url: https://boutique.ed-diamond.com/completez-votre-collection-d-anciens-numeros/594-misc-74.html
+  image: misc-74.png
+  magazine: "MISC-74"
+
+
+- title: "Text-To-Speech avec Python, gstreamer et Google translate"
+  summary: |
+    La démocratisation de *« l'interaction naturelle »* avec des outils comme le Kinect, ou
+    Siri (Iris pour Android) apporte une nouvelle dimension au développement de logiciels
+    et à la manière de les concevoir. C'est pourquoi, dans une moindre mesure, il peut être
+    intéressant d'utiliser de la synthèse vocale pour faire parler ses applications ou ses
+    scripts afin d'avertir un utilisateur qui n'est pas nécessairement devant son ordinateur.
+    Ainsi, le *« text-to-speech »* ou TTS désigne une application ou une bibliothèque
+    permettant de faire de la synthèse vocale (*« speech synthesis »*). Cet article présente
+    une manière simple et efficace d'utiliser le synthétiseur de voix de Google translate
+    pour faire du text-to-speech en Python.
+  date: 2012-11
+  url: https://connect.ed-diamond.com/Linux-Pratique/lp-074/text-to-speech-avec-python-gstreamer-et-google-translate
+  image: lp-074.jpg
+  magazine: "Linux Pratique n°74"
+
+
+- title: "OpenCV détection de mouvement en Python"
+  summary: |
+    La détection de mouvement fait sans doute partie des applications les plus intéressantes
+    de la vision par ordinateur appliquée au domaine de la video-surveillance, aussi bien
+    pour un usage personnel que professionnel. En effet, qui n'a jamais eu envie de savoir
+    qui s'invitait dans un pièce à accès restreint ou même au clavier de son ordinateur
+    portable ? Seulement il n'existe pas ou peu de logiciels dédiés à cette tâche sous Linux.
+    Dans ce cas, quoi de mieux que de le faire soi-même ? Cet article montre comment réaliser
+    d'une manière aussi simple qu'efficace un détecteur de mouvement « fait maison » en
+    utilisant les fonctionnalités de traitement d'image offertes par la bibliothèque OpenCV.
+  date: 2012-11
+  url: https://connect.ed-diamond.com/GNU-Linux-Magazine/glmf-154/opencv-detection-de-mouvement-en-python
+  image: glmf-154.jpg
+  magazine: "GNU/Linux Magazine n°154"
+
+- title: "Chiffrement des mails"
+  summary: |
+    Cet article présente le fonctionnement du chiffrement et de la signature des mails.
+    On s'intéresse donc ici au chiffrement du contenu des mails et des pièces jointes via
+    l'utilisation des deux grandes technologies du domaine, PGP et S/MIME. Nous allons donc
+    voir comment fonctionne le chiffrement et la signature, comment créer ou se procurer
+    clés et certificats et comment les mettre en oeuvre dans un client de messagerie.
+  date: 2010-06
+  url: 
+  image: hakin9.png
+  magazine: "Hakin9"
