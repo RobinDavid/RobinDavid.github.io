@@ -380,7 +380,8 @@
     {% if entry.video and site.enable_video_embedding %}
       <!-- Hidden video block -->
       <div class="abstract hidden">
-        <div style="text-align: center;">{% include video.liquid path=entry.video class="img-fluid rounded z-depth-1" controls=true %}</div>
+        {% comment %} <div style="text-align: center;">{% include video.liquid path=entry.video class="img-fluid rounded z-depth-1" width="560" height="auto" controls=true %}</div> {% endcomment %}
+        <div style="text-align: center;">{% include video.liquid path=entry.video width="560" height="315" controls=true %}</div>
       </div>
     {% endif %}
   </div>
