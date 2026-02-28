@@ -1,16 +1,35 @@
 @phdtesis{cohenthesis,
-    title = "Apprentissage de Représentations de Graphes pour la Cybersécurité",
-    url = "",
+    title = "Analyzing binary programs and obfuscation with graph-based representations and machine learning",
+    url = "https://theses.hal.science/tel-05449270",
     author = "Roxane Cohen",
     year = "2025",
-    note = "Thèse de doctorat dirigée par Rossi, Fabrice Mathematiques appliquees Paris 1",
-    note = "",
-    abstract={},
+    note = "Thèse de doctorat dirigée par Rossi, Fabrice Mathematiques appliquees Paris Dauphine",
+    abstract={Protecting sensitive program content is a critical concern in both legitimate and malicious
+    contexts, with obfuscation being one of the most widely used techniques. By transforming the binary
+    code of compiled programs, obfuscation hinders and delays reverse engineering, forcing attackers to
+    follow specific analytical steps to bypass such protections. This thesispresents several contributions,
+    all grounded in advanced graph representation learning, covering different stages of the obfuscation
+    analysis process. First, we address obfuscation detection and characterization as binary and multi-class
+    classification problems, comparing graph formats, baseline and advanced deep learning models, and
+    enriched feature sets, while assessing the impact of data distribution and compiler optimizations.
+    Our results show that advanced Graph Neural Networks models outperform baselines when provided with
+    features capturing fine-grained code semantics, though performance remains sensitive to optimization
+    levels and dataset partitioning. Second, we conduct an extensive study of binary diffing and similarity,
+    from the standard unobfuscated case, through an ablation study of QBinDiff and a comparison of existing
+    tools, to obfuscated scenarios where attackers aim to extract knowledge from an obfuscated program,
+    without full deobfuscation. Results highlight QBinDiff's advantages for fine-grained diffing and reveal
+    that most intra-procedural and data-flow obfuscations offer limited protection compared to the stronger,
+    yet rarely used, inter-procedural obfuscations. Finally, we explore direct deobfuscation by integrating
+    reinforcement learning and graph representation learning. We model the task as a white-box symbolic
+    compression problem, representing obfuscated functions in a novelgraph format, combining data and control
+    flow, and simplifying them iteratively through graph edit operations guided by a Graph Neural Networks-based
+    agent. Preliminary results on Mixed Boolean Arithmetic obfuscation demonstrate partial but promising
+    success, opening avenues for further research.},
 
     abbr ={Advisor},
     bibtex_show={true},
-    preview={},
-    pdf={XX},
+    preview={thesis_rcohen.png},
+    pdf={thesis_rcohen_2025.pdf},
     dimensions={true},
     additional_info={},
     selected={false}
