@@ -79,7 +79,18 @@ ninja.data = [{
               handler: () => {
                 window.location.href = "/tech-magazine/";
               },
-            },{id: "post-our-pwn2own-journey-against-time-and-randomness-part-2-quarkslab-39-s-blog",
+            },{id: "post-bitcoin-core-audit-quarkslab-39-s-blog",
+        
+          title: 'Bitcoin Core audit - Quarkslab&#39;s blog <svg width="1.2rem" height="1.2rem" top=".5rem" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
+        
+        description: "The Open Source Technology Improvement Fund, Inc. mandated Quarkslab to perform the first public security audit of Bitcoin core, the reference open-source implementation of the Bitcoin decentralized protocol.",
+        section: "Posts",
+        handler: () => {
+          
+            window.open("https://blog.quarkslab.com/bitcoin-core-audit.html", "_blank");
+          
+        },
+      },{id: "post-our-pwn2own-journey-against-time-and-randomness-part-2-quarkslab-39-s-blog",
         
           title: 'Our Pwn2Own journey against time and randomness (part 2) - Quarkslab&#39;s blog <svg width="1.2rem" height="1.2rem" top=".5rem" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
         
@@ -189,9 +200,6 @@ ninja.data = [{
           description: "",
           section: "News",},{id: "news-paper-published-at-dimva-25-experimental-study-of-binary-diffing-resilience-on-obfuscated-programs",
           title: 'Paper published at DIMVA’25: “Experimental Study of Binary Diffing Resilience on Obfuscated Programs”...',
-          description: "",
-          section: "News",},{id: "news-ostif-meetup-on-bitcoin-core-audit-registration-on-luma-here",
-          title: 'OSTIF meetup on Bitcoin Core Audit. Registration on luma: here.',
           description: "",
           section: "News",},{id: "projects-android-aosp-cve-dataset",
           title: 'Android AOSP CVE Dataset',
