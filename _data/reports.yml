@@ -8,9 +8,9 @@
     roughly 100 days, the auditors examined components like mempool handling, peer and chain management,
     and consensus validation. Main contributions came from improving testing infrastructure, including
     new fuzzing tools, expanded test coverage and additional harnesses.
-  date: 2022-11-21
+  date: 2025-11-14
   prepared_for: Brink.dev
-  blog_url: 
+  blog_url: https://blog.quarkslab.com/bitcoin-core-audit.html
   pdf_url: https://www.robindavid.fr/assets/pdf/Bitcoin-Core_25-05-2133-REP_v1.3.pdf
   image: bitcoin_core.png
 

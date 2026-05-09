@@ -7,7 +7,7 @@ nav: false
 nav_order: 1
 ---
 
-## Current
+<!-- ## Current
 
 <div class="publications">
 
@@ -15,7 +15,7 @@ nav_order: 1
 
 </div>
 
-## Past
+## Past -->
 
 <div class="publications">
 
