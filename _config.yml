@@ -127,6 +127,8 @@ external_sources:
     # rss_url: https://medium.com/@al-folio/feed
   - name: Quarkslab Blog
     posts:
+      - url: https://blog.quarkslab.com/bitcoin-core-audit.html
+        published_date: 2025-11-19
       - url: https://blog.quarkslab.com/our-pwn2own-journey-against-time-and-randomness-part-2.html
         published_date: 2023-11-07
       - url: https://blog.quarkslab.com/qbindiff-a-modular-diffing-toolkit.html

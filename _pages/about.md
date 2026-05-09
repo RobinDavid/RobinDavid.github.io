@@ -26,8 +26,13 @@ latest_posts:
 
 Hi there! I am software security researcher and a computer science enthusiast at large.
 I'm a working at Quarkslab, where I handle diverse projects and drive R&D across our
-teams. My core interests include product security, `firmwares` , tooling and software testing techniques like `fuzzing` or `symbolic execution` that I apply both on source code or at binary-level through reverse-engineering. As a hobby, I also have a keen interest in
-`graphs`, _machine learning_ and `program synthesis`.
+teams. My core interests include product security, `firmwares` , tooling and software
+testing techniques like `fuzzing` or `symbolic execution` that I apply both on source
+code or at binary-level through reverse-engineering. I also have a strong interest in
+`graphs`, `AI` and `program synthesis`.
+
+Lately I deep dived into LLM and `agentic AI` applied for security research
+and `workflow automation`.
 
 You can find here the various [conferences](/conferences) I gave, the [papers](/publications) I wrote and the various [projects](/projects) I worked on. More than active blog,
 it is more an archive notepad to quickly access various materials I wrote or published. 

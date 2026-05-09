@@ -11,7 +11,7 @@ nav_order: 1
 
 <div class="publications">
 
-{% bibliography --file phds.bib --query @*[year>=2025]%}
+{% bibliography --file phds.bib --query @*[year>=2026]%}
 
 </div>
 
@@ -19,6 +19,6 @@ nav_order: 1
 
 <div class="publications">
 
-{% bibliography --file phds.bib --query @*[year<2025]%}
+{% bibliography --file phds.bib --query @*[year<2026]%}
 
 </div>

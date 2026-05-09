@@ -1,19 +1,35 @@
-"InterBTC":
-  title: "InterBTC - Vault Client"
+"Bitcoin Core":
+  title: "Bitcoin Core - Audit"
   subtitle: "Technical audit report"
   summary: |
-    Audit report of the Interlay’s vault-client security assessment, an off-chain component bridging
-    InterBTC/Kintsugi and Bitcoin. The audit assessed the correctness of the implementation, secure key
-    management, and resilience against attacks affecting availability or enabling asset theft. Although
-    prior audits and bug bounty reports had addressed issues, this assessment identified four new potential
-    weaknesses—one of which is rated high risk due to a possible double payment upon vault restart.
-    However, the conditions required to exploit this flaw are extremely unlikely, involving rare synchronization
-    failures with the Bitcoin chain.
+    Audit report of the first public third-party security audit of Bitcoin Core, commissioned by OSTIF
+    and funded by Brink, focusing primarily on the peer-to-peer networking layer—the system's main attack
+    surface. Using a mix of manual code review, dynamic testing, and advanced fuzzing techniques over
+    roughly 100 days, the auditors examined components like mempool handling, peer and chain management,
+    and consensus validation. Main contributions came from improving testing infrastructure, including
+    new fuzzing tools, expanded test coverage and additional harnesses.
   date: 2022-11-21
-  prepared_for: Interlay
+  prepared_for: Brink.dev
   blog_url: 
-  pdf_url: https://github.com/quarkslab/public-reports/blob/main/Reports/22-09-1042-REP-2.pdf
-  image: interbtc-cover.png
+  pdf_url: https://www.robindavid.fr/assets/pdf/Bitcoin-Core_25-05-2133-REP_v1.3.pdf
+  image: bitcoin_core.png
+
+# "InterBTC":
+#   title: "InterBTC - Vault Client"
+#   subtitle: "Technical audit report"
+#   summary: |
+#     Audit report of the Interlay’s vault-client security assessment, an off-chain component bridging
+#     InterBTC/Kintsugi and Bitcoin. The audit assessed the correctness of the implementation, secure key
+#     management, and resilience against attacks affecting availability or enabling asset theft. Although
+#     prior audits and bug bounty reports had addressed issues, this assessment identified four new potential
+#     weaknesses—one of which is rated high risk due to a possible double payment upon vault restart.
+#     However, the conditions required to exploit this flaw are extremely unlikely, involving rare synchronization
+#     failures with the Bitcoin chain.
+#   date: 2022-11-21
+#   prepared_for: Interlay
+#   blog_url: 
+#   pdf_url: https://github.com/quarkslab/public-reports/blob/main/Reports/22-09-1042-REP-2.pdf
+#   image: interbtc-cover.png
 
 
 "XCM":
