@@ -2,7 +2,7 @@
 layout: about
 title: About
 permalink: /
-subtitle: Senior Security Researcher.
+subtitle: Research Lead - Security Researcher.
 
 profile:
   align: right
@@ -14,7 +14,7 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 
 announcements:
-  enabled: true # includes a list of news items
+  enabled: false # includes a list of news items
   scrollable: true # adds a vertical scroll bar if there are more than 3 news items
   limit: 3 # leave blank to include all the news in the `_news` folder
 
@@ -24,9 +24,10 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-Hi there! I am software security researcher and a computer science enthusiast at large.
-I'm a working at Quarkslab, where I handle diverse projects and drive R&D across our
-teams. My core interests include product security, `firmwares` , tooling and software
+Hi there! I am a security researcher working on defensive and offensive security at
+Epsilon Sec. Our core focus is mobile devices such as iOS or Android.
+
+My core interests include product security, mobile internals, `firmwares` , tooling and software
 testing techniques like `fuzzing` or `symbolic execution` that I apply both on source
 code or at binary-level through reverse-engineering. I also have a strong interest in
 `graphs`, `AI` and `program synthesis`.
