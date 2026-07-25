@@ -24,16 +24,18 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-Hi there! I am a security researcher working on defensive and offensive security at
-Epsilon Sec. Our core focus is mobile devices such as iOS or Android.
+Hi there! I am a security researcher working on offensive security at
+Epsilon. Our core focus is mobile security especially iOS and Android.
 
-My core interests include product security, mobile internals, `firmwares` , tooling and software
-testing techniques like `fuzzing` or `symbolic execution` that I apply both on source
+My core interests include product security, mobile internals, `firmwares`, boot chain and software
+testing techniques like `fuzzing` that I apply both on source
 code or at binary-level through reverse-engineering. I also have a strong interest in
 `graphs`, `AI` and `program synthesis`.
 
 Lately I deep dived into LLM and `agentic AI` applied for security research
-and `workflow automation`.
+and `workflow automation`. After spending years writing open-source tooling
+for searching bugs and vulnerabilities, I am now teaching AI/LLMs to use them
+efficently to leverage the best of theirs stochastic reasoning.
 
 You can find here the various [conferences](/conferences) I gave, the [papers](/publications) I wrote and the various [projects](/projects) I worked on. More than active blog,
 it is more an archive notepad to quickly access various materials I wrote or published. 
